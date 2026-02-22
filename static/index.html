@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAAMS — Compliance and Auditing Made Simple</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .fade-in { animation: fadeIn 0.2s ease-in; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+
+    .owner-input {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      width: 100%;
+      min-width: 90px;
+      color: #374151;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .owner-input:hover  { border-color: #d1d5db; }
+    .owner-input:focus  { background: #fff; border-color: #6ee7b7; outline: none; box-shadow: 0 0 0 2px #d1fae5; }
+    .owner-input::placeholder { color: #d1d5db; font-style: italic; }
+    .owner-saved { animation: savedFlash 0.6s ease-out; }
+    @keyframes savedFlash { 0%,100% { background:transparent; } 30% { background:#d1fae5; } }
+
+    /* Drawer */
+    #ctrl-drawer {
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+    }
+    #ctrl-drawer.open { transform: translateX(0); }
+
+    /* Toast */
+    #toast {
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    #toast.hidden { opacity: 0; pointer-events: none; transform: translateY(8px); }
+
+    /* History modal */
+    #history-modal { transition: opacity 0.2s; }
+    #history-modal.hidden { opacity: 0; pointer-events: none; }
+
+    /* Auth overlay */
+    #auth-overlay { backdrop-filter: blur(2px); }
+
+    /* Role badges */
+    .role-admin       { background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+    .role-contributor { background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; }
+    .role-viewer      { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+
+    /* User mgmt modal */
+    #user-mgmt-modal { transition: opacity 0.2s; }
+    #user-mgmt-modal.hidden { opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header class="bg-slate-900 text-white px-6 py-4 flex items-center gap-3 shadow-lg">
+  <svg class="w-7 h-7 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944
+         a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0
+         003 9c0 5.591 3.824 10.29 9 11.622
+         5.176-1.332 9-6.03 9-11.622
+         0-1.042-.133-2.052-.382-3.016z"/>
+  </svg>
+  <span class="text-xl font-bold tracking-tight">CAAMS</span>
+  <span class="ml-2 text-slate-400 text-sm hidden sm:inline">Compliance and Auditing Made Simple</span>
+  <div class="ml-auto flex items-center gap-2">
+    <div id="nav-tabs" class="hidden items-center gap-1 mr-1">
+      <button id="tab-dashboard" onclick="showDashboardView()"
+        class="px-3 py-1.5 rounded text-sm transition bg-slate-700 hover:bg-slate-600">Dashboard</button>
+      <button id="tab-new" onclick="showNewAssessment()"
+        class="px-3 py-1.5 rounded text-sm transition bg-slate-700 hover:bg-slate-600 contributor-only">+ New</button>
+    </div>
+    <button id="btn-history" onclick="showHistoryModal()"
+      class="hidden px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition">
+      Load Assessment
+    </button>
+    <button id="btn-new" onclick="showSetup()"
+      class="hidden px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition">
+      + New
+    </button>
+    <button id="btn-users" onclick="showUserMgmt()"
+      class="hidden px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition admin-only">
+      Users
+    </button>
+    <button onclick="window.open('/docs','_blank')"
+      class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition">
+      API Docs
+    </button>
+    <div id="user-badge" class="hidden items-center gap-2 ml-1">
+      <span id="user-badge-name" class="text-sm font-medium text-slate-200"></span>
+      <span id="user-badge-role" class="text-xs px-2 py-0.5 rounded-full font-semibold"></span>
+      <button onclick="logoutUser()"
+        class="px-2.5 py-1 bg-slate-700 hover:bg-red-700 rounded text-xs transition text-slate-300 hover:text-white">
+        Log out
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Auth Overlay ───────────────────────────────────────────────────────── -->
+<div id="auth-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center">
+  <!-- Login form -->
+  <div id="login-card" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
+    <div class="flex items-center gap-2 mb-6">
+      <svg class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+      <span class="text-lg font-bold text-slate-800">Sign in to CAAMS</span>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Username</label>
+        <input id="login-user" type="text" autocomplete="username" placeholder="your-username"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+        <input id="login-pass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          onkeydown="if(event.key==='Enter')loginUser()" />
+      </div>
+      <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 rounded px-3 py-2"></div>
+      <button onclick="loginUser()"
+        class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-sm transition">
+        Sign In
+      </button>
+    </div>
+  </div>
+
+  <!-- First-time setup form -->
+  <div id="setup-card" class="hidden bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
+    <div class="flex items-center gap-2 mb-2">
+      <svg class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <span class="text-lg font-bold text-slate-800">Create Admin Account</span>
+    </div>
+    <p class="text-xs text-gray-500 mb-5">First-time setup — create the initial administrator account.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Username</label>
+        <input id="setup-user" type="text" placeholder="admin"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Email <span class="text-gray-400 font-normal">(optional)</span></label>
+        <input id="setup-email" type="email" placeholder="admin@company.com"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+        <input id="setup-pass" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+      </div>
+      <div id="setup-overlay-error" class="hidden text-xs text-red-600 bg-red-50 rounded px-3 py-2"></div>
+      <button onclick="createFirstAdmin()"
+        class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-sm transition">
+        Create Admin &amp; Sign In
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Dashboard View ─────────────────────────────────────────────────────── -->
+<div id="dashboard-view" class="hidden max-w-6xl mx-auto px-4 py-8 fade-in">
+  <h2 class="text-2xl font-bold mb-1">Dashboard</h2>
+  <p class="text-gray-500 mb-6 text-sm">Coverage history and score trends across all assessments.</p>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+      <span class="font-semibold text-sm">Assessment History</span>
+      <button onclick="showNewAssessment()"
+        class="ml-auto px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition contributor-only">
+        + New Assessment
+      </button>
+    </div>
+    <div id="history-table-body" class="text-sm text-gray-400 italic p-5">Loading…</div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+    <div class="font-semibold text-sm mb-4">Coverage Score Over Time</div>
+    <div id="trend-chart-wrap" class="relative h-64">
+      <canvas id="trend-chart"></canvas>
+    </div>
+    <div id="trend-empty" class="hidden text-gray-400 italic text-sm text-center py-8">
+      No assessments yet — run one to see trends.
+    </div>
+  </div>
+</div>
+
+<!-- ── Setup View ─────────────────────────────────────────────────────────── -->
+<div id="setup-view" class="max-w-6xl mx-auto px-4 py-8">
+
+  <h2 class="text-2xl font-bold mb-1">New Assessment</h2>
+  <p class="text-gray-500 mb-6 text-sm">Pick a framework, select the tools in your environment, configure each one, then click Analyze.</p>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left column: name + framework -->
+    <div class="lg:col-span-1 space-y-4">
+
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <label class="block text-sm font-semibold mb-1">Assessment Name</label>
+        <input id="assessment-name" type="text" placeholder="e.g. Q1 2026 CIS Review"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <label class="block text-sm font-semibold mb-2">Framework</label>
+        <div id="framework-list" class="space-y-2 text-sm text-gray-400 italic">Loading…</div>
+      </div>
+
+      <!-- Summary of selected tools -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="text-sm font-semibold mb-2">Selected Tools <span id="selected-count" class="text-gray-400 font-normal">(0)</span></div>
+        <div id="selected-summary" class="text-sm text-gray-400 italic">None yet.</div>
+      </div>
+
+      <button onclick="runAssessment()"
+        class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow transition text-sm">
+        Analyze Coverage →
+      </button>
+      <div id="setup-error" class="hidden text-red-600 text-sm text-center"></div>
+    </div>
+
+    <!-- Right column: tool catalog -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="text-sm font-semibold">Tool Catalog</span>
+          <div class="ml-auto flex items-center gap-2">
+            <a href="/tools/template/download"
+               class="text-xs text-blue-600 hover:underline whitespace-nowrap"
+               title="Download a JSON template to add your own tools">↓ Template</a>
+            <label class="cursor-pointer text-xs bg-white border border-gray-300 hover:border-emerald-500 text-gray-700 rounded-lg px-2.5 py-1.5 transition whitespace-nowrap"
+                   title="Upload a JSON file with custom tools">
+              ↑ Upload Tools
+              <input id="tool-upload-input" type="file" accept=".json" class="hidden"
+                     onchange="uploadTools(this)" />
+            </label>
+            <input id="tool-search" type="text" placeholder="Search tools…"
+              oninput="filterTools(this.value)"
+              class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-44 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+          </div>
+        </div>
+        <div id="upload-feedback" class="hidden mb-3 text-xs rounded-lg px-3 py-2"></div>
+        <div id="tool-catalog" class="space-y-4 text-sm text-gray-400 italic">Loading…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results View ───────────────────────────────────────────────────────── -->
+<div id="results-view" class="hidden max-w-6xl mx-auto px-4 py-8 fade-in">
+
+  <!-- Summary bar -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl border shadow-sm p-4 text-center">
+      <div id="res-total" class="text-3xl font-bold text-slate-700">—</div>
+      <div class="text-xs text-gray-500 mt-1">Total Controls</div>
+    </div>
+    <div class="bg-green-50 rounded-xl border border-green-200 shadow-sm p-4 text-center">
+      <div id="res-covered" class="text-3xl font-bold text-green-700">—</div>
+      <div class="text-xs text-gray-500 mt-1">Covered</div>
+    </div>
+    <div class="bg-amber-50 rounded-xl border border-amber-200 shadow-sm p-4 text-center">
+      <div id="res-partial" class="text-3xl font-bold text-amber-700">—</div>
+      <div class="text-xs text-gray-500 mt-1">Partial</div>
+    </div>
+    <div class="bg-red-50 rounded-xl border border-red-200 shadow-sm p-4 text-center">
+      <div id="res-not-covered" class="text-3xl font-bold text-red-700">—</div>
+      <div class="text-xs text-gray-500 mt-1">Not Covered</div>
+    </div>
+  </div>
+
+  <!-- Coverage bar -->
+  <div class="bg-white rounded-xl border shadow-sm p-4 mb-6">
+    <div class="flex justify-between text-sm mb-2">
+      <span class="font-semibold">Overall Coverage</span>
+      <span id="res-pct" class="font-bold text-emerald-700">—%</span>
+    </div>
+    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+      <div id="coverage-bar" class="h-3 bg-emerald-500 rounded-full transition-all duration-700" style="width:0%"></div>
+    </div>
+    <p class="text-xs text-gray-400 mt-1">Score = covered controls + 0.5 × partial controls</p>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+    <h2 class="text-lg font-bold">Control Results
+      <span id="override-badge" class="hidden ml-2 text-xs font-normal text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5"></span>
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      <select id="filter-status" onchange="renderTable()" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
+        <option value="">All statuses</option>
+        <option value="covered">Covered</option>
+        <option value="partial">Partial</option>
+        <option value="not_covered">Not Covered</option>
+      </select>
+      <button onclick="cloneAssessment()"
+        class="px-3 py-1.5 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        Clone
+      </button>
+      <button onclick="exportXLSX()"
+        class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        XLSX
+      </button>
+      <button onclick="exportPDF()"
+        class="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-sm transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0
+               0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Results table -->
+  <div class="bg-white rounded-xl border shadow-sm overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-800 text-white text-xs uppercase tracking-wide">
+        <tr>
+          <th class="px-4 py-3 text-left w-24">Control</th>
+          <th class="px-4 py-3 text-left">Title</th>
+          <th class="px-4 py-3 text-left w-32">Status</th>
+          <th class="px-3 py-3 text-left w-32" title="Click to edit">Owner ✎</th>
+          <th class="px-3 py-3 text-left w-32" title="Click to edit">Team ✎</th>
+          <th class="px-3 py-3 text-left w-32" title="Click to edit">Ev. Owner ✎</th>
+          <th class="px-4 py-3 text-left">Covered By</th>
+          <th class="px-4 py-3 text-left">Missing</th>
+          <th class="px-4 py-3 text-left w-10"></th>
+        </tr>
+      </thead>
+      <tbody id="results-tbody" class="divide-y divide-gray-100"></tbody>
+    </table>
+  </div>
+
+  <!-- Recommendations accordion -->
+  <div id="recs-section" class="mt-6 bg-white rounded-xl border shadow-sm overflow-hidden">
+    <button onclick="toggleRecs()"
+      class="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold hover:bg-gray-50 transition text-left">
+      <span class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m1.636-6.364l.707.707
+               M12 21v-1M6.343 17.657l-.707.707M17.657 17.657l.707.707
+               M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+        </svg>
+        Capability Gaps
+      </span>
+      <span id="recs-chevron" class="text-gray-400 text-xs">▶ Click to load</span>
+    </button>
+    <div id="recs-body" class="hidden border-t border-gray-100 px-5 py-4">
+      <p class="text-gray-400 italic text-sm">Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Control Detail Drawer ───────────────────────────────────────────────── -->
+<div id="drawer-overlay" class="fixed inset-0 bg-black/30 z-30 hidden" onclick="closeDrawer()"></div>
+<aside id="ctrl-drawer"
+  class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl border-l border-gray-200 z-40 overflow-y-auto">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-slate-800 text-white">
+    <div>
+      <div id="drawer-ctrl-id" class="font-mono text-xs text-slate-400"></div>
+      <div id="drawer-ctrl-title" class="font-bold text-base leading-snug mt-0.5"></div>
+    </div>
+    <button onclick="closeDrawer()" class="p-1.5 rounded hover:bg-slate-700 transition text-slate-300 hover:text-white">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="p-5 space-y-5 text-sm">
+
+    <!-- Description -->
+    <div id="drawer-desc" class="text-gray-600 text-xs leading-relaxed hidden"></div>
+
+    <!-- Status + override -->
+    <div>
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Status</label>
+      <div class="flex items-center gap-3 flex-wrap">
+        <span id="drawer-status-badge" class="inline-block px-3 py-1 rounded-full text-xs font-semibold"></span>
+        <select id="drawer-override" onchange="applyOverride()"
+          class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+          <option value="">Auto (computed)</option>
+          <option value="covered">Override → Covered</option>
+          <option value="partial">Override → Partial</option>
+          <option value="not_covered">Override → Not Covered</option>
+        </select>
+      </div>
+      <div id="drawer-override-fields" class="hidden mt-3 space-y-2">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Justification / Compensating control</label>
+          <textarea id="drawer-justification" rows="3"
+            placeholder="Describe the compensating control or rationale…"
+            onblur="saveDrawerNote()"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Override expires</label>
+          <input id="drawer-expires" type="date" onblur="saveDrawerNote()"
+            class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Notes</label>
+      <textarea id="drawer-notes" rows="4"
+        placeholder="Add audit notes, context, or observations…"
+        onblur="saveDrawerNote()"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"></textarea>
+    </div>
+
+    <!-- Evidence / Process link -->
+    <div>
+      <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        Evidence / Process Link
+      </label>
+      <div class="flex gap-2">
+        <input id="drawer-evidence-url" type="url"
+          placeholder="https://sharepoint.example.com/…"
+          onblur="saveDrawerNote()"
+          onkeydown="if(event.key==='Enter') this.blur()"
+          class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+        <button id="drawer-url-open" onclick="openEvidenceUrl()" title="Open link"
+          class="hidden px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs transition">
+          Open ↗
+        </button>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">Link to SharePoint, Google Drive, Confluence, or any process doc.</p>
+    </div>
+
+    <!-- Coverage detail -->
+    <div class="border-t border-gray-100 pt-4 space-y-3">
+      <div>
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Covered By</div>
+        <div id="drawer-covered-by" class="text-xs text-gray-700"></div>
+      </div>
+      <div id="drawer-missing-wrap">
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Missing Tags</div>
+        <div id="drawer-missing" class="text-xs text-red-600"></div>
+      </div>
+      <div id="drawer-evidence-wrap">
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Evidence Required</div>
+        <ul id="drawer-evidence-list" class="text-xs text-gray-600 list-disc list-inside space-y-0.5"></ul>
+      </div>
+    </div>
+
+    <!-- Save indicator -->
+    <div id="drawer-save-msg" class="hidden text-xs text-emerald-600 font-medium text-right">Saved ✓</div>
+  </div>
+</aside>
+
+<!-- ── History Modal ───────────────────────────────────────────────────────── -->
+<div id="history-modal"
+  class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      <h3 class="font-bold text-base">Load Previous Assessment</h3>
+      <button onclick="hideHistoryModal()" class="text-gray-400 hover:text-gray-700 transition">✕</button>
+    </div>
+    <div id="history-list" class="overflow-y-auto flex-1 divide-y divide-gray-100 text-sm">
+      <p class="p-5 text-gray-400 italic">Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── User Management Modal ──────────────────────────────────── -->
+<div id="user-mgmt-modal" class="hidden fixed inset-0 bg-black/40 z-40 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+      <span class="font-bold text-base">User Management</span>
+      <button onclick="closeUserMgmt()" class="ml-auto text-gray-400 hover:text-gray-700 text-xl leading-none">✕</button>
+    </div>
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Add New User</div>
+      <div class="flex gap-2 flex-wrap">
+        <input id="nu-username" type="text" placeholder="Username"
+          class="flex-1 min-w-28 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+        <input id="nu-email" type="email" placeholder="Email (optional)"
+          class="flex-1 min-w-28 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+        <input id="nu-password" type="password" placeholder="Password"
+          class="flex-1 min-w-28 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+        <select id="nu-role"
+          class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+          <option value="viewer">Viewer</option>
+          <option value="contributor">Contributor</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button onclick="addUser()"
+          class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition">
+          Add
+        </button>
+      </div>
+      <div id="nu-error" class="hidden mt-2 text-xs text-red-600 bg-red-50 rounded px-3 py-1.5"></div>
+    </div>
+    <div class="overflow-y-auto flex-1">
+      <div id="user-list" class="text-sm text-gray-400 italic p-5">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Loading overlay ────────────────────────────────────────────────────── -->
+<div id="loading" class="hidden fixed inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50">
+  <div class="flex flex-col items-center gap-3">
+    <svg class="animate-spin h-10 w-10 text-emerald-600" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+    </svg>
+    <span class="text-slate-700 font-medium">Analyzing coverage…</span>
+  </div>
+</div>
+
+<!-- ── Toast ──────────────────────────────────────────────────────────────── -->
+<div id="toast"
+  class="hidden fixed bottom-6 right-6 z-50 bg-slate-800 text-white text-sm px-4 py-3 rounded-xl shadow-lg">
+</div>
+
+<script>
+// ── Auth state ───────────────────────────────────────────────────────────────
+let currentUser = null;   // { id, username, role, email }
+let token = sessionStorage.getItem("caams_token");
+let trendChart = null;    // Chart.js instance
+
+// ── State ─────────────────────────────────────────────────────────────────
+let frameworks       = [];
+let toolsByCategory  = {};
+let selectedFrameworkId = null;
+let selectedTools    = {};   // tool_id -> { name, category, config }
+let allResults       = [];
+let currentAssessmentId = null;
+let drawerControlId  = null;  // control_id currently open in drawer
+let recsLoaded       = false;
+let expandedControls = new Set();  // set of control_ids with expanded sub-controls
+
+// ── Config fields per tool category ──────────────────────────────────────
+const CONFIG_FIELDS = {
+  "IAM":                   [{ key: "mfa_enforced",    label: "MFA Enforced",       type: "bool" }],
+  "PAM":                   [{ key: "mfa_enforced",    label: "MFA Enforced",       type: "bool" }],
+  "VPN":                   [{ key: "mfa_enforced",    label: "MFA Enforced",       type: "bool" },
+                            { key: "logging_enabled", label: "Logging Enabled",    type: "bool" }],
+  "Network Access Control":[{ key: "mfa_enforced",    label: "MFA Enforced",       type: "bool" },
+                            { key: "logging_enabled", label: "Logging Enabled",    type: "bool" }],
+  "SIEM":                  [
+    { key: "logging_enabled", label: "Logging Enabled",   type: "bool" },
+    { key: "retention_days",  label: "Retention (days)",  type: "number", placeholder: "e.g. 365" },
+  ],
+  "SOAR":                  [{ key: "logging_enabled", label: "Logging Enabled",    type: "bool" }],
+  "Cloud Security":        [{ key: "logging_enabled", label: "Logging Enabled",    type: "bool" }],
+  "MDM":                   [{ key: "logging_enabled", label: "Logging Enabled",    type: "bool" }],
+  "Backup & Recovery":     [{ key: "backup_testing",  label: "Restore Tests Done", type: "bool" }],
+};
+const HARDENING_FIELD = { key: "hardening_applied", label: "Hardening Applied", type: "bool" };
+
+const STATUS_BADGE = {
+  covered:     "bg-green-100 text-green-800 border border-green-300",
+  partial:     "bg-amber-100 text-amber-800 border border-amber-300",
+  not_covered: "bg-red-100 text-red-800 border border-red-300",
+};
+
+// ── Auth fetch wrapper ────────────────────────────────────────────────────────
+async function apiFetch(url, options = {}) {
+  if (token) options.headers = { ...options.headers, Authorization: `Bearer ${token}` };
+  const res = await fetch(url, options);
+  if (res.status === 401) {
+    currentUser = null; token = null;
+    sessionStorage.removeItem("caams_token");
+    showLoginCard();
+    throw new Error("Session expired — please log in again");
+  }
+  return res;
+}
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────
+async function boot() {
+  try {
+    const sn = await (await fetch("/auth/setup-needed")).json();
+    if (sn.needed) { showSetupCard(); return; }
+  } catch {}
+  if (token) {
+    try {
+      const me = await fetch("/auth/me", { headers: { Authorization: `Bearer ${token}` } });
+      if (me.ok) { currentUser = await me.json(); initApp(); return; }
+    } catch {}
+  }
+  token = null; sessionStorage.removeItem("caams_token");
+  showLoginCard();
+}
+
+function initApp() {
+  document.getElementById("auth-overlay").style.display = "none";
+  document.getElementById("nav-tabs").style.display = "flex";
+  document.getElementById("btn-users").classList.remove("hidden");
+  document.getElementById("user-badge").style.display = "flex";
+  renderUserBadge();
+  updateRoleUI();
+  initSetupData();
+  showDashboardView();
+}
+
+async function initSetupData() {
+  const [fwRes, toolRes] = await Promise.all([apiFetch("/frameworks/"), apiFetch("/tools/")]);
+  frameworks = await fwRes.json();
+  const tools = await toolRes.json();
+  toolsByCategory = {};
+  for (const t of tools) {
+    if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
+    toolsByCategory[t.category].push(t);
+  }
+  renderFrameworks();
+  renderToolCatalog();
+}
+
+// ── Frameworks ────────────────────────────────────────────────────────────
+function renderFrameworks() {
+  const el = document.getElementById("framework-list");
+  if (!frameworks.length) { el.textContent = "No frameworks found."; return; }
+  el.innerHTML = frameworks.map(fw => `
+    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 border border-transparent
+                  ${selectedFrameworkId === fw.id ? 'border-emerald-400 bg-emerald-50' : ''}">
+      <input type="radio" name="framework" value="${fw.id}"
+        ${selectedFrameworkId === fw.id ? "checked" : ""}
+        onchange="selectFramework(${fw.id})"
+        class="accent-emerald-600" />
+      <span class="font-medium text-gray-800">${fw.name}</span>
+      <span class="ml-auto text-xs text-gray-400">${fw.version}</span>
+    </label>
+  `).join("");
+}
+
+function selectFramework(id) {
+  selectedFrameworkId = id;
+  renderFrameworks();
+}
+
+// ── Tool Catalog ──────────────────────────────────────────────────────────
+function renderToolCatalog(search = "") {
+  const el = document.getElementById("tool-catalog");
+  const q = search.toLowerCase();
+  let html = "";
+
+  for (const [cat, tools] of Object.entries(toolsByCategory)) {
+    const filtered = tools.filter(t =>
+      !q || t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q)
+    );
+    if (!filtered.length) continue;
+
+    html += `<div class="mb-1">
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">${escHtml(cat)}</div>
+      <div class="space-y-1">`;
+
+    for (const tool of filtered) {
+      const checked = !!selectedTools[tool.id];
+      html += `
+        <div class="rounded-lg border ${checked ? 'border-emerald-400 bg-emerald-50' : 'border-gray-100 bg-gray-50'} overflow-hidden">
+          <label class="flex items-center gap-2 px-3 py-2 cursor-pointer">
+            <input type="checkbox" value="${tool.id}"
+              ${checked ? "checked" : ""}
+              onchange="toggleTool(${tool.id}, '${escHtml(tool.name)}', '${escHtml(tool.category)}')"
+              class="accent-emerald-600 w-4 h-4 shrink-0" />
+            <span class="font-medium text-gray-800">${escHtml(tool.name)}</span>
+          </label>
+          ${checked ? renderConfigFields(tool) : ""}
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  el.innerHTML = html || `<p class="text-gray-400 italic">No tools match.</p>`;
+}
+
+function renderConfigFields(tool) {
+  const fields = [...(CONFIG_FIELDS[tool.category] || []), HARDENING_FIELD];
+  const config = selectedTools[tool.id]?.config || {};
+
+  let html = `<div class="px-3 pb-3 pt-1 border-t border-emerald-200 space-y-2 bg-white">
+    <div class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Configuration</div>`;
+
+  for (const f of fields) {
+    if (f.type === "bool") {
+      html += `
+        <label class="flex items-center gap-2 text-xs cursor-pointer">
+          <input type="checkbox" ${config[f.key] ? "checked" : ""}
+            onchange="setConfig(${tool.id}, '${f.key}', this.checked)"
+            class="accent-emerald-600" />
+          ${f.label}
+        </label>`;
+    } else if (f.type === "number") {
+      html += `
+        <label class="flex items-center gap-2 text-xs">
+          ${f.label}
+          <input type="number" min="0" value="${config[f.key] || ''}"
+            placeholder="${f.placeholder || ''}"
+            oninput="setConfig(${tool.id}, '${f.key}', parseInt(this.value) || 0)"
+            class="ml-auto w-20 border border-gray-300 rounded px-2 py-1 text-xs" />
+        </label>`;
+    }
+  }
+  html += `</div>`;
+  return html;
+}
+
+function toggleTool(id, name, category) {
+  if (selectedTools[id]) delete selectedTools[id];
+  else selectedTools[id] = { name, category, config: {} };
+  updateSelectedSummary();
+  renderToolCatalog(document.getElementById("tool-search").value);
+}
+
+function setConfig(toolId, key, value) {
+  if (!selectedTools[toolId]) return;
+  selectedTools[toolId].config[key] = value;
+}
+
+function filterTools(q) { renderToolCatalog(q); }
+
+async function uploadTools(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = "";  // allow re-uploading same file
+
+  const fb = document.getElementById("upload-feedback");
+  fb.className = "mb-3 text-xs rounded-lg px-3 py-2 bg-blue-50 text-blue-700";
+  fb.textContent = `Uploading ${file.name}…`;
+
+  const form = new FormData();
+  form.append("file", file);
+
+  try {
+    const res = await apiFetch("/tools/upload", { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) {
+      fb.className = "mb-3 text-xs rounded-lg px-3 py-2 bg-red-50 text-red-700";
+      fb.textContent = `Upload failed: ${data.detail || "Unknown error"}`;
+      return;
+    }
+
+    const parts = [];
+    if (data.added > 0)   parts.push(`${data.added} tool${data.added !== 1 ? "s" : ""} added`);
+    if (data.skipped > 0) parts.push(`${data.skipped} already existed`);
+    if (data.errors.length) parts.push(`${data.errors.length} error${data.errors.length !== 1 ? "s" : ""}`);
+
+    if (data.added > 0) {
+      fb.className = "mb-3 text-xs rounded-lg px-3 py-2 bg-emerald-50 text-emerald-700";
+      // Reload tool catalog to include the new tools
+      const toolsRes = await apiFetch("/tools/");
+      const tools = await toolsRes.json();
+      toolsByCategory = {};
+      for (const t of tools) {
+        if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
+        toolsByCategory[t.category].push(t);
+      }
+      renderToolCatalog(document.getElementById("tool-search").value);
+    } else {
+      fb.className = "mb-3 text-xs rounded-lg px-3 py-2 bg-amber-50 text-amber-700";
+    }
+
+    fb.textContent = parts.join(" · ") || "No changes made";
+    if (data.errors.length) {
+      fb.textContent += ` — Errors: ${data.errors.join("; ")}`;
+    }
+  } catch (e) {
+    fb.className = "mb-3 text-xs rounded-lg px-3 py-2 bg-red-50 text-red-700";
+    fb.textContent = "Upload failed: network error";
+  }
+}
+
+function updateSelectedSummary() {
+  const count = Object.keys(selectedTools).length;
+  document.getElementById("selected-count").textContent = `(${count})`;
+  const el = document.getElementById("selected-summary");
+  if (!count) { el.innerHTML = `<span class="text-gray-400 italic">None yet.</span>`; return; }
+  el.innerHTML = Object.values(selectedTools).map(t =>
+    `<div class="flex items-center gap-1.5 py-0.5">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block shrink-0"></span>
+      <span>${escHtml(t.name)}</span>
+    </div>`
+  ).join("");
+}
+
+// ── Run Assessment ────────────────────────────────────────────────────────
+async function runAssessment() {
+  const errEl = document.getElementById("setup-error");
+  errEl.classList.add("hidden");
+
+  const name = document.getElementById("assessment-name").value.trim();
+  if (!name) return showError("Please enter an assessment name.");
+  if (!selectedFrameworkId) return showError("Please select a framework.");
+  if (!Object.keys(selectedTools).length) return showError("Please select at least one tool.");
+
+  setLoading(true);
+  try {
+    const payload = {
+      name,
+      framework_id: selectedFrameworkId,
+      tools: Object.entries(selectedTools).map(([id, t]) => ({
+        tool_id: parseInt(id),
+        config: t.config,
+      })),
+    };
+
+    const res = await apiFetch("/assessments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const assessment = await res.json();
+
+    await loadAssessmentResults(assessment.id);
+  } catch (e) {
+    showError("Error: " + e.message);
+    setLoading(false);
+  }
+}
+
+async function loadAssessmentResults(id) {
+  currentAssessmentId = id;
+  recsLoaded = false;
+  const resRes = await apiFetch(`/assessments/${id}/results`);
+  if (!resRes.ok) throw new Error(await resRes.text());
+  const data = await resRes.json();
+  allResults = data.results;
+  expandedControls.clear();
+  showResults(data);
+}
+
+// ── Results ───────────────────────────────────────────────────────────────
+function showResults(data) {
+  setLoading(false);
+  document.getElementById("setup-view").classList.add("hidden");
+  document.getElementById("results-view").classList.remove("hidden");
+  document.getElementById("btn-new").classList.remove("hidden");
+  document.getElementById("btn-history").classList.remove("hidden");
+
+  document.getElementById("res-total").textContent      = data.total;
+  document.getElementById("res-covered").textContent    = data.covered;
+  document.getElementById("res-partial").textContent    = data.partial;
+  document.getElementById("res-not-covered").textContent = data.not_covered;
+  document.getElementById("res-pct").textContent        = `${data.coverage_pct}%`;
+  setTimeout(() => {
+    document.getElementById("coverage-bar").style.width = `${data.coverage_pct}%`;
+  }, 50);
+
+  // Override badge
+  const overriddenCount = data.results.filter(r => r.status_overridden).length;
+  const badge = document.getElementById("override-badge");
+  if (overriddenCount) {
+    badge.textContent = `${overriddenCount} manually overridden`;
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
+
+  // Reset recommendations
+  const recsBody = document.getElementById("recs-body");
+  recsBody.classList.add("hidden");
+  recsBody.innerHTML = '<p class="text-gray-400 italic text-sm">Loading…</p>';
+  document.getElementById("recs-chevron").textContent = "▶ Click to load";
+
+  renderTable();
+}
+
+function recomputeSummaryCards() {
+  const total      = allResults.length;
+  const covered    = allResults.filter(r => r.status === "covered").length;
+  const partial    = allResults.filter(r => r.status === "partial").length;
+  const notCovered = allResults.filter(r => r.status === "not_covered").length;
+  const pct        = total ? Math.round(((covered + partial * 0.5) / total) * 1000) / 10 : 0;
+  document.getElementById("res-total").textContent       = total;
+  document.getElementById("res-covered").textContent     = covered;
+  document.getElementById("res-partial").textContent     = partial;
+  document.getElementById("res-not-covered").textContent = notCovered;
+  document.getElementById("res-pct").textContent         = `${pct}%`;
+  document.getElementById("coverage-bar").style.width    = `${pct}%`;
+}
+
+function ownerCell(controlId, field, value, placeholder) {
+  const safeId = controlId.replace(/[^a-zA-Z0-9]/g, "_");
+  return `<input
+    id="own-${safeId}-${field}"
+    type="text"
+    class="owner-input"
+    placeholder="${placeholder}"
+    value="${(value || '').replace(/"/g, '&quot;')}"
+    onblur="saveOwnership('${controlId}', '${field}', this)"
+    onkeydown="if(event.key==='Enter'){this.blur();} if(event.key==='Escape'){this.value=this.dataset.orig||''; this.blur();}"
+    onfocus="this.dataset.orig=this.value"
+  />`;
+}
+
+function toggleExpand(controlId, event) {
+  event.stopPropagation();
+  if (expandedControls.has(controlId)) {
+    expandedControls.delete(controlId);
+  } else {
+    expandedControls.add(controlId);
+  }
+  renderTable();
+}
+
+function renderTable() {
+  const filterStatus = document.getElementById("filter-status").value;
+  const tbody = document.getElementById("results-tbody");
+  const rows = allResults.filter(r => !filterStatus || r.status === filterStatus);
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-gray-400">No controls match.</td></tr>`;
+    return;
+  }
+
+  const html = [];
+  rows.forEach((r, i) => {
+    const statusLabel = r.status.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+    const badgeCls = STATUS_BADGE[r.status] || "";
+    const overridePip = r.status_overridden
+      ? `<span title="Manually overridden" class="ml-1 text-blue-500 font-bold text-xs">✎</span>`
+      : "";
+    const notesPip = (r.notes || r.evidence_url)
+      ? `<span title="Has notes / evidence link" class="ml-1 text-emerald-500 text-xs">●</span>`
+      : "";
+
+    const hasSubs = r.sub_controls && r.sub_controls.length > 0;
+    const isExpanded = expandedControls.has(r.control_id);
+    const chevron = hasSubs
+      ? `<button class="mr-1.5 text-gray-400 hover:text-blue-600 transition text-xs leading-none select-none"
+             onclick="toggleExpand('${r.control_id}', event)"
+             title="${isExpanded ? 'Collapse' : 'Expand'} safeguards">${isExpanded ? '▼' : '▶'}</button>`
+      : `<span class="mr-1.5 inline-block w-3"></span>`;
+
+    const rowBg = i % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+    html.push(`
+      <tr class="${rowBg} hover:bg-blue-50 transition cursor-pointer"
+          onclick="openDrawer('${r.control_id}')">
+        <td class="px-4 py-3 font-mono text-xs font-semibold text-slate-600 whitespace-nowrap">
+          <span class="inline-flex items-center">${chevron}${r.control_id}</span>
+        </td>
+        <td class="px-4 py-3 font-medium text-sm">
+          ${escHtml(r.title)}${notesPip}
+        </td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${badgeCls}">
+            ${statusLabel}${overridePip}
+          </span>
+        </td>
+        <td class="px-2 py-2" onclick="event.stopPropagation()">${ownerCell(r.control_id, 'owner',          r.owner,          'Add owner')}</td>
+        <td class="px-2 py-2" onclick="event.stopPropagation()">${ownerCell(r.control_id, 'team',           r.team,           'Add team')}</td>
+        <td class="px-2 py-2" onclick="event.stopPropagation()">${ownerCell(r.control_id, 'evidence_owner', r.evidence_owner, 'Add ev. owner')}</td>
+        <td class="px-4 py-3 text-xs text-gray-600">${r.contributing_tools.map(escHtml).join(", ") || "—"}</td>
+        <td class="px-4 py-3 text-xs text-red-600">${r.missing_tags.map(escHtml).join(", ") || "—"}</td>
+        <td class="px-3 py-3 text-gray-400 text-xs whitespace-nowrap" onclick="openDrawer('${r.control_id}')">Details →</td>
+      </tr>`);
+
+    if (hasSubs && isExpanded) {
+      r.sub_controls.forEach(sub => {
+        html.push(`
+          <tr class="bg-blue-50/40 border-l-4 border-blue-200">
+            <td class="pl-10 pr-4 py-1.5 font-mono text-xs text-blue-700 whitespace-nowrap">${sub.id}</td>
+            <td class="px-4 py-1.5 text-xs text-slate-600" colspan="8">${sub.title}</td>
+          </tr>`);
+      });
+    }
+  });
+
+  tbody.innerHTML = html.join("");
+}
+
+// ── Ownership save ─────────────────────────────────────────────────────────
+async function saveOwnership(controlId, field, inputEl) {
+  const value = inputEl.value.trim();
+  const orig  = inputEl.dataset.orig || "";
+  if (value === orig) return;
+
+  const result = allResults.find(r => r.control_id === controlId);
+  if (result) result[field] = value || null;
+
+  try {
+    const res = await apiFetch(
+      `/assessments/${currentAssessmentId}/controls/${encodeURIComponent(controlId)}/ownership`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: value || null }),
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    inputEl.dataset.orig = value;
+    inputEl.classList.add("owner-saved");
+    setTimeout(() => inputEl.classList.remove("owner-saved"), 700);
+  } catch (e) {
+    inputEl.value = orig;
+    if (result) result[field] = orig || null;
+    console.error("Failed to save ownership:", e);
+  }
+}
+
+// ── Control Detail Drawer ─────────────────────────────────────────────────
+function openDrawer(controlId) {
+  const r = allResults.find(x => x.control_id === controlId);
+  if (!r) return;
+
+  drawerControlId = controlId;
+
+  document.getElementById("drawer-ctrl-id").textContent    = r.control_id;
+  document.getElementById("drawer-ctrl-title").textContent = r.title;
+
+  const descEl = document.getElementById("drawer-desc");
+  if (r.description) {
+    descEl.textContent = r.description;
+    descEl.classList.remove("hidden");
+  } else {
+    descEl.classList.add("hidden");
+  }
+
+  // Status badge
+  const statusLabel = r.status.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+  const badge = document.getElementById("drawer-status-badge");
+  badge.className = `inline-block px-3 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[r.status] || ""}`;
+  badge.textContent = statusLabel + (r.status_overridden ? " (overridden)" : "");
+
+  // Override dropdown
+  const sel = document.getElementById("drawer-override");
+  sel.value = r.status_overridden ? r.status : "";
+  toggleOverrideFields(r.status_overridden);
+
+  document.getElementById("drawer-justification").value = r.override_justification || "";
+  document.getElementById("drawer-expires").value       = r.override_expires || "";
+
+  // Notes + evidence URL
+  document.getElementById("drawer-notes").value        = r.notes || "";
+  const urlInput = document.getElementById("drawer-evidence-url");
+  urlInput.value = r.evidence_url || "";
+  document.getElementById("drawer-url-open").classList.toggle("hidden", !r.evidence_url);
+
+  // Coverage detail
+  document.getElementById("drawer-covered-by").textContent =
+    r.contributing_tools.length ? r.contributing_tools.join(", ") : "None";
+
+  const missingWrap = document.getElementById("drawer-missing-wrap");
+  document.getElementById("drawer-missing").textContent =
+    r.missing_tags.length ? r.missing_tags.join(", ") : "—";
+  missingWrap.classList.toggle("hidden", !r.missing_tags.length);
+
+  const evList = document.getElementById("drawer-evidence-list");
+  const evWrap = document.getElementById("drawer-evidence-wrap");
+  if (r.evidence && r.evidence.length) {
+    evList.innerHTML = r.evidence.map(e => `<li>${escHtml(e)}</li>`).join("");
+    evWrap.classList.remove("hidden");
+  } else {
+    evWrap.classList.add("hidden");
+  }
+
+  document.getElementById("drawer-save-msg").classList.add("hidden");
+
+  // Open drawer
+  document.getElementById("drawer-overlay").classList.remove("hidden");
+  document.getElementById("ctrl-drawer").classList.add("open");
+}
+
+function closeDrawer() {
+  document.getElementById("ctrl-drawer").classList.remove("open");
+  document.getElementById("drawer-overlay").classList.add("hidden");
+  drawerControlId = null;
+}
+
+function toggleOverrideFields(show) {
+  document.getElementById("drawer-override-fields").classList.toggle("hidden", !show);
+}
+
+function applyOverride() {
+  const val = document.getElementById("drawer-override").value;
+  toggleOverrideFields(!!val);
+  saveDrawerNote();
+}
+
+function openEvidenceUrl() {
+  const url = document.getElementById("drawer-evidence-url").value.trim();
+  if (url) window.open(url, "_blank", "noopener");
+}
+
+async function saveDrawerNote() {
+  if (!drawerControlId || !currentAssessmentId) return;
+
+  const overrideVal   = document.getElementById("drawer-override").value;
+  const justification = document.getElementById("drawer-justification").value.trim();
+  const expires       = document.getElementById("drawer-expires").value || null;
+  const notes         = document.getElementById("drawer-notes").value.trim();
+  const evidenceUrl   = document.getElementById("drawer-evidence-url").value.trim();
+
+  // Update open-link button visibility
+  document.getElementById("drawer-url-open").classList.toggle("hidden", !evidenceUrl);
+
+  const payload = {
+    notes:                  notes || null,
+    evidence_url:           evidenceUrl || null,
+    status_override:        overrideVal || "",
+    override_justification: justification || null,
+    override_expires:       expires,
+  };
+
+  try {
+    const res = await apiFetch(
+      `/assessments/${currentAssessmentId}/controls/${encodeURIComponent(drawerControlId)}/notes`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+
+    // Update local state
+    const r = allResults.find(x => x.control_id === drawerControlId);
+    if (r) {
+      r.notes                 = notes || null;
+      r.evidence_url          = evidenceUrl || null;
+      r.status_overridden     = !!overrideVal;
+      r.override_justification = justification || null;
+      r.override_expires      = expires;
+      if (overrideVal) r.status = overrideVal;
+      // Re-render the status badge in drawer
+      const statusLabel = r.status.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+      const badge = document.getElementById("drawer-status-badge");
+      badge.className = `inline-block px-3 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[r.status] || ""}`;
+      badge.textContent = statusLabel + (r.status_overridden ? " (overridden)" : "");
+    }
+
+    renderTable();
+    recomputeSummaryCards();
+
+    // Update override badge in header
+    const overriddenCount = allResults.filter(x => x.status_overridden).length;
+    const hdrBadge = document.getElementById("override-badge");
+    if (overriddenCount) {
+      hdrBadge.textContent = `${overriddenCount} manually overridden`;
+      hdrBadge.classList.remove("hidden");
+    } else {
+      hdrBadge.classList.add("hidden");
+    }
+
+    const msg = document.getElementById("drawer-save-msg");
+    msg.classList.remove("hidden");
+    setTimeout(() => msg.classList.add("hidden"), 2000);
+  } catch (e) {
+    console.error("Failed to save note:", e);
+  }
+}
+
+// ── Capability gaps ──────────────────────────────────────────────────────
+async function toggleRecs() {
+  const body = document.getElementById("recs-body");
+  const chevron = document.getElementById("recs-chevron");
+
+  if (!body.classList.contains("hidden")) {
+    body.classList.add("hidden");
+    chevron.textContent = "▶ Click to load";
+    return;
+  }
+
+  body.classList.remove("hidden");
+  chevron.textContent = "▼";
+
+  if (recsLoaded) return;
+  recsLoaded = true;
+
+  try {
+    const res = await apiFetch(`/assessments/${currentAssessmentId}/recommendations`);
+    const recs = await res.json();
+
+    if (!recs.length) {
+      body.innerHTML = `<p class="text-emerald-700 text-sm font-medium">All required capabilities are covered — no gaps detected.</p>`;
+      return;
+    }
+
+    body.innerHTML = `
+      <p class="text-xs text-gray-500 mb-3">Capability gaps ranked by number of controls affected. Acquire a solution providing each capability to improve coverage.</p>
+      <div class="space-y-3">
+        ${recs.map(rec => `
+          <div class="border border-gray-200 rounded-lg p-3">
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-semibold text-sm font-mono">${escHtml(rec.capability)}</span>
+              <span class="shrink-0 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                ${rec.controls_count} control${rec.controls_count !== 1 ? "s" : ""} affected
+              </span>
+            </div>
+            <div class="mt-1.5 text-xs text-gray-500">
+              Affects: <span class="text-gray-700">${rec.controls_detail.map(escHtml).join(", ")}</span>
+            </div>
+          </div>
+        `).join("")}
+      </div>`;
+  } catch (e) {
+    body.innerHTML = `<p class="text-red-500 text-sm">Failed to load recommendations.</p>`;
+    recsLoaded = false;
+  }
+}
+
+// ── Clone Assessment ──────────────────────────────────────────────────────
+async function cloneAssessment() {
+  if (!currentAssessmentId) return;
+  try {
+    const res = await apiFetch(`/assessments/${currentAssessmentId}/clone`, { method: "POST" });
+    if (!res.ok) throw new Error(await res.text());
+    const cloned = await res.json();
+    showToast(`Cloned as "${cloned.name}" — loading…`);
+    setLoading(true);
+    recsLoaded = false;
+    await loadAssessmentResults(cloned.id);
+  } catch (e) {
+    showToast("Clone failed: " + e.message, true);
+  }
+}
+
+// ── History / Load previous ───────────────────────────────────────────────
+async function showHistoryModal() {
+  const modal = document.getElementById("history-modal");
+  const list  = document.getElementById("history-list");
+  modal.classList.remove("hidden");
+  list.innerHTML = `<p class="p-5 text-gray-400 italic text-sm">Loading…</p>`;
+
+  try {
+    const res = await apiFetch("/assessments");
+    const assessments = await res.json();
+
+    if (!assessments.length) {
+      list.innerHTML = `<p class="p-5 text-gray-400 italic text-sm">No saved assessments found.</p>`;
+      return;
+    }
+
+    list.innerHTML = assessments.map(a => {
+      const date = a.created_at
+        ? new Date(a.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+        : "";
+      const isCurrent = a.id === currentAssessmentId;
+      return `
+        <div class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition ${isCurrent ? 'bg-emerald-50' : ''}">
+          <div>
+            <div class="font-medium text-sm">${escHtml(a.name)} ${isCurrent ? '<span class="text-xs text-emerald-600 ml-1">(current)</span>' : ''}</div>
+            <div class="text-xs text-gray-400">ID ${a.id} · ${date}</div>
+          </div>
+          <button onclick="loadHistory(${a.id})"
+            class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs transition">
+            Load
+          </button>
+        </div>`;
+    }).join("");
+  } catch (e) {
+    list.innerHTML = `<p class="p-5 text-red-500 text-sm">Failed to load assessments.</p>`;
+  }
+}
+
+function hideHistoryModal() {
+  document.getElementById("history-modal").classList.add("hidden");
+}
+
+async function loadHistory(id) {
+  hideHistoryModal();
+  setLoading(true);
+  try {
+    recsLoaded = false;
+    await loadAssessmentResults(id);
+  } catch (e) {
+    showToast("Failed to load: " + e.message, true);
+    setLoading(false);
+  }
+}
+
+// ── Export ────────────────────────────────────────────────────────────────
+async function exportXLSX() {
+  if (!currentAssessmentId) return;
+  await _downloadExport(`/assessments/${currentAssessmentId}/export`, "xlsx");
+}
+
+async function exportPDF() {
+  if (!currentAssessmentId) return;
+  await _downloadExport(`/assessments/${currentAssessmentId}/export/pdf`, "pdf");
+}
+
+async function _downloadExport(url, ext) {
+  try {
+    const res = await apiFetch(url);
+    if (!res.ok) throw new Error(await res.text());
+    const blob = await res.blob();
+    const cd = res.headers.get("Content-Disposition") || "";
+    const match = cd.match(/filename="([^"]+)"/);
+    const filename = match ? match[1] : `export.${ext}`;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    showToast("Export failed: " + e.message, true);
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function showSetup() {
+  closeDrawer();
+  document.getElementById("results-view").classList.add("hidden");
+  document.getElementById("setup-view").classList.remove("hidden");
+  document.getElementById("btn-new").classList.add("hidden");
+  document.getElementById("btn-history").classList.add("hidden");
+}
+
+function showError(msg) {
+  const el = document.getElementById("setup-error");
+  el.textContent = msg;
+  el.classList.remove("hidden");
+}
+
+function setLoading(on) {
+  document.getElementById("loading").classList.toggle("hidden", !on);
+}
+
+let _toastTimer = null;
+function showToast(msg, isError = false) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = `fixed bottom-6 right-6 z-50 text-sm px-4 py-3 rounded-xl shadow-lg transition
+    ${isError ? 'bg-red-700 text-white' : 'bg-slate-800 text-white'}`;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.add("hidden"), 3500);
+}
+
+function escHtml(s) {
+  if (s == null) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Close modal on backdrop click
+document.getElementById("history-modal").addEventListener("click", function(e) {
+  if (e.target === this) hideHistoryModal();
+});
+
+// Close drawer on Escape key
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    closeDrawer();
+    hideHistoryModal();
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+boot();
+
+// ── Auth UI helpers ────────────────────────────────────────────────────────
+function showLoginCard() {
+  document.getElementById("auth-overlay").style.display = "flex";
+  document.getElementById("login-card").classList.remove("hidden");
+  document.getElementById("setup-card").classList.add("hidden");
+  setTimeout(() => document.getElementById("login-user").focus(), 50);
+}
+
+function showSetupCard() {
+  document.getElementById("auth-overlay").style.display = "flex";
+  document.getElementById("setup-card").classList.remove("hidden");
+  document.getElementById("login-card").classList.add("hidden");
+  setTimeout(() => document.getElementById("setup-user").focus(), 50);
+}
+
+async function loginUser() {
+  const username = document.getElementById("login-user").value.trim();
+  const password = document.getElementById("login-pass").value;
+  const errEl = document.getElementById("login-error");
+  errEl.classList.add("hidden");
+  if (!username || !password) { errEl.textContent = "Enter username and password."; errEl.classList.remove("hidden"); return; }
+  try {
+    const form = new URLSearchParams({ username, password });
+    const res = await fetch("/auth/login", { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.detail || "Login failed"; errEl.classList.remove("hidden"); return; }
+    token = data.access_token;
+    sessionStorage.setItem("caams_token", token);
+    currentUser = { username: data.username, role: data.role };
+    initApp();
+  } catch (e) {
+    errEl.textContent = "Network error — " + e.message;
+    errEl.classList.remove("hidden");
+  }
+}
+
+async function createFirstAdmin() {
+  const username = document.getElementById("setup-user").value.trim();
+  const email    = document.getElementById("setup-email").value.trim();
+  const password = document.getElementById("setup-pass").value;
+  const errEl    = document.getElementById("setup-overlay-error");
+  errEl.classList.add("hidden");
+  if (!username || !password) { errEl.textContent = "Username and password required."; errEl.classList.remove("hidden"); return; }
+  try {
+    const res = await fetch("/auth/setup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email: email || null, password, role: "admin" }),
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.detail || "Setup failed"; errEl.classList.remove("hidden"); return; }
+    token = data.access_token;
+    sessionStorage.setItem("caams_token", token);
+    currentUser = { username: data.username, role: data.role };
+    initApp();
+  } catch (e) {
+    errEl.textContent = "Network error — " + e.message;
+    errEl.classList.remove("hidden");
+  }
+}
+
+function logoutUser() {
+  currentUser = null; token = null;
+  sessionStorage.removeItem("caams_token");
+  document.getElementById("auth-overlay").style.display = "flex";
+  document.getElementById("nav-tabs").style.display = "none";
+  document.getElementById("btn-users").classList.add("hidden");
+  document.getElementById("user-badge").style.display = "none";
+  showLoginCard();
+}
+
+function renderUserBadge() {
+  if (!currentUser) return;
+  document.getElementById("user-badge-name").textContent = currentUser.username;
+  const rb = document.getElementById("user-badge-role");
+  rb.textContent = currentUser.role;
+  rb.className = `text-xs px-2 py-0.5 rounded-full font-semibold role-${currentUser.role}`;
+}
+
+function updateRoleUI() {
+  const isAdmin = currentUser?.role === "admin";
+  const isContrib = isAdmin || currentUser?.role === "contributor";
+  // admin-only elements
+  document.querySelectorAll(".admin-only").forEach(el => el.classList.toggle("hidden", !isAdmin));
+  // contributor-only elements
+  document.querySelectorAll(".contributor-only").forEach(el => el.classList.toggle("hidden", !isContrib));
+  // viewer: read-only — disable checkboxes and upload
+  if (!isContrib) {
+    document.querySelectorAll('#tool-catalog input[type="checkbox"]').forEach(el => el.disabled = true);
+    const ul = document.querySelector("label[for='tool-upload-input']");
+    if (ul) ul.style.display = "none";
+  }
+}
+
+// ── View navigation ────────────────────────────────────────────────────────
+function showDashboardView() {
+  document.getElementById("dashboard-view").classList.remove("hidden");
+  document.getElementById("setup-view").classList.add("hidden");
+  document.getElementById("results-view").classList.add("hidden");
+  document.getElementById("btn-new").classList.add("hidden");
+  document.getElementById("btn-history").classList.add("hidden");
+  document.getElementById("tab-dashboard").classList.add("bg-emerald-700");
+  document.getElementById("tab-new").classList.remove("bg-emerald-700");
+  loadDashboard();
+}
+
+function showNewAssessment() {
+  document.getElementById("dashboard-view").classList.add("hidden");
+  document.getElementById("setup-view").classList.remove("hidden");
+  document.getElementById("results-view").classList.add("hidden");
+  document.getElementById("tab-dashboard").classList.remove("bg-emerald-700");
+  document.getElementById("tab-new").classList.add("bg-emerald-700");
+  updateRoleUI();
+}
+
+// ── Dashboard / History ────────────────────────────────────────────────────
+const CHART_COLORS = [
+  "#10b981","#3b82f6","#f59e0b","#ef4444","#8b5cf6","#ec4899","#14b8a6","#f97316"
+];
+
+async function loadDashboard() {
+  const el = document.getElementById("history-table-body");
+  el.innerHTML = '<p class="text-gray-400 italic">Loading…</p>';
+  try {
+    const res = await apiFetch("/assessments/history");
+    const items = await res.json();
+    renderHistoryTable(items);
+    renderTrendChart(items);
+  } catch (e) {
+    el.innerHTML = `<p class="text-red-500 text-sm p-2">Failed to load: ${e.message}</p>`;
+  }
+}
+
+function renderHistoryTable(items) {
+  const el = document.getElementById("history-table-body");
+  const isAdmin = currentUser?.role === "admin";
+  const isContrib = isAdmin || currentUser?.role === "contributor";
+  if (!items.length) {
+    el.innerHTML = '<p class="text-gray-400 italic p-2">No assessments yet.</p>';
+    return;
+  }
+  el.innerHTML = `
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
+          <th class="px-5 py-2 text-left font-semibold">Name</th>
+          <th class="px-5 py-2 text-left font-semibold">Framework</th>
+          <th class="px-5 py-2 text-left font-semibold">Date</th>
+          <th class="px-5 py-2 text-center font-semibold">Score</th>
+          <th class="px-5 py-2 text-center font-semibold">Controls</th>
+          <th class="px-5 py-2 text-right font-semibold">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map(a => {
+          const date = a.created_at
+            ? new Date(a.created_at).toLocaleDateString(undefined, {month:"short",day:"numeric",year:"numeric"})
+            : "—";
+          const pct = a.coverage_pct;
+          const pctClass = pct >= 80 ? "text-green-700 bg-green-50" : pct >= 50 ? "text-amber-700 bg-amber-50" : "text-red-700 bg-red-50";
+          return `
+            <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+              <td class="px-5 py-3 font-medium">${escHtml(a.name)}</td>
+              <td class="px-5 py-3 text-gray-500">${escHtml(a.framework)}</td>
+              <td class="px-5 py-3 text-gray-400 whitespace-nowrap">${date}</td>
+              <td class="px-5 py-3 text-center">
+                <span class="inline-block px-2 py-0.5 rounded-full text-xs font-bold ${pctClass}">${pct}%</span>
+              </td>
+              <td class="px-5 py-3 text-center text-xs text-gray-500">
+                <span class="text-green-600 font-semibold">${a.covered}</span> /
+                <span class="text-amber-600 font-semibold">${a.partial}</span> /
+                <span class="text-red-500 font-semibold">${a.not_covered}</span>
+                <span class="text-gray-400 ml-1">(${a.total})</span>
+              </td>
+              <td class="px-5 py-3 text-right flex gap-2 justify-end">
+                <button onclick="loadHistoryAssessment(${a.id})"
+                  class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs transition">
+                  View
+                </button>
+                ${isAdmin ? `<button onclick="deleteAssessmentFromDash(${a.id}, this)"
+                  class="px-3 py-1 bg-red-100 hover:bg-red-600 text-red-600 hover:text-white rounded text-xs transition">
+                  Delete
+                </button>` : ""}
+              </td>
+            </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+}
+
+function renderTrendChart(items) {
+  const wrap = document.getElementById("trend-chart-wrap");
+  const emptyEl = document.getElementById("trend-empty");
+  if (!items.length) {
+    wrap.classList.add("hidden"); emptyEl.classList.remove("hidden"); return;
+  }
+  wrap.classList.remove("hidden"); emptyEl.classList.add("hidden");
+
+  // Group by framework
+  const byFw = {};
+  for (const a of [...items].reverse()) {
+    if (!byFw[a.framework]) byFw[a.framework] = [];
+    byFw[a.framework].push({
+      x: a.created_at ? new Date(a.created_at).toLocaleDateString() : a.id,
+      y: a.coverage_pct,
+      label: a.name,
+    });
+  }
+
+  const datasets = Object.entries(byFw).map(([fw, pts], i) => ({
+    label: fw,
+    data: pts.map(p => p.y),
+    labels: pts.map(p => p.x + " — " + p.label),
+    borderColor: CHART_COLORS[i % CHART_COLORS.length],
+    backgroundColor: CHART_COLORS[i % CHART_COLORS.length] + "22",
+    tension: 0.3,
+    pointRadius: 4,
+    fill: false,
+  }));
+
+  // Shared x-axis labels (use dates)
+  const allLabels = [...new Set(items.map(a =>
+    a.created_at ? new Date(a.created_at).toLocaleDateString() : String(a.id)
+  ))].reverse();
+
+  if (trendChart) trendChart.destroy();
+  const ctx = document.getElementById("trend-chart").getContext("2d");
+  trendChart = new Chart(ctx, {
+    type: "line",
+    data: { labels: allLabels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}%` } },
+      },
+      scales: {
+        y: { min: 0, max: 100, ticks: { callback: v => v + "%" }, grid: { color: "#f1f5f9" } },
+        x: { grid: { color: "#f1f5f9" } },
+      },
+    },
+  });
+}
+
+async function loadHistoryAssessment(id) {
+  setLoading(true);
+  try {
+    recsLoaded = false;
+    await loadAssessmentResults(id);
+    document.getElementById("dashboard-view").classList.add("hidden");
+    document.getElementById("btn-history").classList.remove("hidden");
+    document.getElementById("btn-new").classList.remove("hidden");
+  } catch (e) {
+    showToast("Failed to load: " + e.message, true);
+    setLoading(false);
+  }
+}
+
+async function deleteAssessmentFromDash(id, btn) {
+  if (!confirm("Delete this assessment? This cannot be undone.")) return;
+  try {
+    const res = await apiFetch(`/assessments/${id}`, { method: "DELETE" });
+    if (res.ok || res.status === 204) {
+      btn.closest("tr").remove();
+      showToast("Assessment deleted");
+      loadDashboard(); // refresh chart
+    } else {
+      const d = await res.json();
+      showToast(d.detail || "Delete failed", true);
+    }
+  } catch (e) { showToast("Delete failed: " + e.message, true); }
+}
+
+// ── User Management ────────────────────────────────────────────────────────
+function showUserMgmt() {
+  document.getElementById("user-mgmt-modal").classList.remove("hidden");
+  loadUserList();
+}
+
+function closeUserMgmt() {
+  document.getElementById("user-mgmt-modal").classList.add("hidden");
+}
+
+async function loadUserList() {
+  const el = document.getElementById("user-list");
+  el.innerHTML = '<p class="text-gray-400 italic">Loading…</p>';
+  try {
+    const res = await apiFetch("/auth/users");
+    const users = await res.json();
+    el.innerHTML = users.map(u => `
+      <div class="flex items-center gap-3 px-6 py-3 border-b border-gray-50 hover:bg-gray-50">
+        <div class="flex-1 min-w-0">
+          <span class="font-medium text-sm">${escHtml(u.username)}</span>
+          ${u.email ? `<span class="ml-2 text-xs text-gray-400">${escHtml(u.email)}</span>` : ""}
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded-full font-semibold role-${u.role}">${u.role}</span>
+        <select onchange="changeUserRole(${u.id}, this.value)"
+          ${u.id === currentUser?.id ? 'disabled' : ''}
+          class="border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400
+                 ${u.id === currentUser?.id ? 'opacity-50 cursor-not-allowed' : ''}">
+          <option value="viewer"      ${u.role==="viewer"      ? "selected":""}>Viewer</option>
+          <option value="contributor" ${u.role==="contributor" ? "selected":""}>Contributor</option>
+          <option value="admin"       ${u.role==="admin"       ? "selected":""}>Admin</option>
+        </select>
+        <span class="text-xs ${u.is_active ? 'text-green-600' : 'text-gray-400'}">${u.is_active ? "Active":"Inactive"}</span>
+        ${u.id !== currentUser?.id
+          ? `<button onclick="deleteUser(${u.id}, this)"
+               class="px-2 py-1 text-xs bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded transition">
+               Delete
+             </button>`
+          : '<span class="px-2 py-1 text-xs text-gray-300">(you)</span>'}
+      </div>`).join("") || '<p class="p-5 text-gray-400 italic">No users.</p>';
+  } catch (e) {
+    el.innerHTML = `<p class="p-4 text-red-500 text-sm">Failed: ${e.message}</p>`;
+  }
+}
+
+async function changeUserRole(userId, role) {
+  try {
+    const res = await apiFetch(`/auth/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role }),
+    });
+    if (!res.ok) { const d = await res.json(); showToast(d.detail || "Update failed", true); }
+    else { showToast("Role updated"); loadUserList(); }
+  } catch (e) { showToast("Error: " + e.message, true); }
+}
+
+async function addUser() {
+  const username = document.getElementById("nu-username").value.trim();
+  const email    = document.getElementById("nu-email").value.trim();
+  const password = document.getElementById("nu-password").value;
+  const role     = document.getElementById("nu-role").value;
+  const errEl    = document.getElementById("nu-error");
+  errEl.classList.add("hidden");
+  if (!username || !password) { errEl.textContent = "Username and password required."; errEl.classList.remove("hidden"); return; }
+  try {
+    const res = await apiFetch("/auth/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email: email || null, password, role }),
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.detail || "Failed"; errEl.classList.remove("hidden"); return; }
+    ["nu-username","nu-email","nu-password"].forEach(id => document.getElementById(id).value = "");
+    showToast(`User "${username}" created`);
+    loadUserList();
+  } catch (e) { errEl.textContent = "Error: " + e.message; errEl.classList.remove("hidden"); }
+}
+
+async function deleteUser(userId, btn) {
+  if (!confirm("Delete this user?")) return;
+  try {
+    const res = await apiFetch(`/auth/users/${userId}`, { method: "DELETE" });
+    if (res.ok || res.status === 204) { showToast("User deleted"); loadUserList(); }
+    else { const d = await res.json(); showToast(d.detail || "Delete failed", true); }
+  } catch (e) { showToast("Error: " + e.message, true); }
+}
+
+</script>
+</body>
+</html>

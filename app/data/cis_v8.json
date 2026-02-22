@@ -1,0 +1,1051 @@
+{
+  "name": "CIS Controls",
+  "version": "v8",
+  "controls": [
+    {
+      "control_id": "CIS-1",
+      "title": "Inventory and Control of Enterprise Assets",
+      "description": "Actively manage (inventory, track, and correct) all enterprise assets connected to the infrastructure physically, virtually, remotely, and those within cloud environments.",
+      "required_tags": [
+        "asset-inventory",
+        "asset-discovery"
+      ],
+      "optional_tags": [
+        "cmdb",
+        "dhcp-logging",
+        "mdm",
+        "network-monitoring"
+      ],
+      "evidence": [
+        "Enterprise asset inventory list",
+        "Asset discovery scan results",
+        "Network device inventory",
+        "MDM enrollment report"
+      ],
+      "sub_controls": [
+        {
+          "id": "1.1",
+          "title": "Establish and Maintain Detailed Enterprise Asset Inventory"
+        },
+        {
+          "id": "1.2",
+          "title": "Address Unauthorized Assets"
+        },
+        {
+          "id": "1.3",
+          "title": "Utilize an Active Discovery Tool"
+        },
+        {
+          "id": "1.4",
+          "title": "Use Dynamic Host Configuration Protocol (DHCP) Logging to Update Enterprise Asset Inventory"
+        },
+        {
+          "id": "1.5",
+          "title": "Use a Passive Asset Discovery Tool"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-2",
+      "title": "Inventory and Control of Software Assets",
+      "description": "Actively manage all software on the network so that only authorized software is installed and can execute, and unauthorized software is found and prevented.",
+      "required_tags": [
+        "software-inventory",
+        "asset-inventory"
+      ],
+      "optional_tags": [
+        "application-allowlisting",
+        "cmdb",
+        "patch-management",
+        "vulnerability-scanning"
+      ],
+      "evidence": [
+        "Software inventory report",
+        "Installed applications list per device",
+        "Unauthorized software detection logs",
+        "Software allowlist policy"
+      ],
+      "sub_controls": [
+        {
+          "id": "2.1",
+          "title": "Establish and Maintain a Software Inventory"
+        },
+        {
+          "id": "2.2",
+          "title": "Ensure Authorized Software is Currently Supported"
+        },
+        {
+          "id": "2.3",
+          "title": "Address Unauthorized Software"
+        },
+        {
+          "id": "2.4",
+          "title": "Utilize Automated Software Inventory Tools"
+        },
+        {
+          "id": "2.5",
+          "title": "Allowlist Authorized Software"
+        },
+        {
+          "id": "2.6",
+          "title": "Allowlist Authorized Libraries"
+        },
+        {
+          "id": "2.7",
+          "title": "Allowlist Authorized Scripts"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-3",
+      "title": "Data Protection",
+      "description": "Develop processes and technical controls to identify, classify, securely handle, retain, and dispose of data.",
+      "required_tags": [
+        "data-classification",
+        "data-encryption"
+      ],
+      "optional_tags": [
+        "access-control",
+        "container-security",
+        "data-retention",
+        "dlp",
+        "secrets-management"
+      ],
+      "evidence": [
+        "Data classification policy",
+        "Encryption configuration documentation",
+        "DLP policy and sample reports",
+        "Data retention schedule"
+      ],
+      "sub_controls": [
+        {
+          "id": "3.1",
+          "title": "Establish and Maintain a Data Management Process"
+        },
+        {
+          "id": "3.2",
+          "title": "Establish and Maintain a Data Inventory"
+        },
+        {
+          "id": "3.3",
+          "title": "Configure Data Access Control Lists"
+        },
+        {
+          "id": "3.4",
+          "title": "Enforce Data Retention"
+        },
+        {
+          "id": "3.5",
+          "title": "Securely Dispose of Data"
+        },
+        {
+          "id": "3.6",
+          "title": "Encrypt Data on End-User Devices"
+        },
+        {
+          "id": "3.7",
+          "title": "Establish and Maintain a Data Classification Scheme"
+        },
+        {
+          "id": "3.8",
+          "title": "Document Data Flows"
+        },
+        {
+          "id": "3.9",
+          "title": "Encrypt Data on Removable Media"
+        },
+        {
+          "id": "3.10",
+          "title": "Encrypt Sensitive Data in Transit"
+        },
+        {
+          "id": "3.11",
+          "title": "Encrypt Sensitive Data at Rest"
+        },
+        {
+          "id": "3.12",
+          "title": "Segment Data Processing and Storage Based on Sensitivity"
+        },
+        {
+          "id": "3.13",
+          "title": "Deploy a Data Loss Prevention Solution"
+        },
+        {
+          "id": "3.14",
+          "title": "Log Sensitive Data Access"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-4",
+      "title": "Secure Configuration of Enterprise Assets and Software",
+      "description": "Establish and maintain the secure configuration of enterprise assets and software.",
+      "required_tags": [
+        "configuration-management",
+        "hardening"
+      ],
+      "optional_tags": [
+        "cloud-security-posture",
+        "cmdb",
+        "compliance-scanning",
+        "container-security",
+        "patch-management",
+        "secrets-management",
+        "vulnerability-scanning"
+      ],
+      "evidence": [
+        "Baseline configuration documentation",
+        "Hardening standards (e.g. CIS Benchmarks)",
+        "Configuration scan results",
+        "Configuration drift detection reports"
+      ],
+      "sub_controls": [
+        {
+          "id": "4.1",
+          "title": "Establish and Maintain a Secure Configuration Process"
+        },
+        {
+          "id": "4.2",
+          "title": "Establish and Maintain a Secure Configuration Process for Network Infrastructure"
+        },
+        {
+          "id": "4.3",
+          "title": "Configure Automatic Session Locking on Enterprise Assets"
+        },
+        {
+          "id": "4.4",
+          "title": "Implement and Manage a Firewall on Servers"
+        },
+        {
+          "id": "4.5",
+          "title": "Implement and Manage a Firewall on End-User Devices"
+        },
+        {
+          "id": "4.6",
+          "title": "Securely Manage Enterprise Assets and Software"
+        },
+        {
+          "id": "4.7",
+          "title": "Manage Default Accounts on Enterprise Assets and Software"
+        },
+        {
+          "id": "4.8",
+          "title": "Uninstall or Disable Unnecessary Services on Enterprise Assets and Software"
+        },
+        {
+          "id": "4.9",
+          "title": "Configure Trusted DNS Servers on Enterprise Assets"
+        },
+        {
+          "id": "4.10",
+          "title": "Enforce Automatic Device Lockout on Portable End-User Devices"
+        },
+        {
+          "id": "4.11",
+          "title": "Enforce Remote Wipe Capability on Portable End-User Devices"
+        },
+        {
+          "id": "4.12",
+          "title": "Separate Enterprise Workspaces on Mobile End-User Devices"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-5",
+      "title": "Account Management",
+      "description": "Use processes and tools to assign and manage authorization to credentials for user accounts, including administrator and service accounts.",
+      "required_tags": [
+        "identity-management",
+        "access-control"
+      ],
+      "optional_tags": [
+        "MFA",
+        "RBAC",
+        "SSO",
+        "privileged-access-management",
+        "secrets-management"
+      ],
+      "evidence": [
+        "User account inventory",
+        "Access review records",
+        "Privileged account list",
+        "Offboarding process documentation",
+        "Account lifecycle policy"
+      ],
+      "sub_controls": [
+        {
+          "id": "5.1",
+          "title": "Establish and Maintain an Inventory of Accounts"
+        },
+        {
+          "id": "5.2",
+          "title": "Use Unique Passwords"
+        },
+        {
+          "id": "5.3",
+          "title": "Disable Dormant Accounts"
+        },
+        {
+          "id": "5.4",
+          "title": "Restrict Administrator Privileges to Dedicated Administrator Accounts"
+        },
+        {
+          "id": "5.5",
+          "title": "Establish and Maintain an Inventory of Service Accounts"
+        },
+        {
+          "id": "5.6",
+          "title": "Centralize Account Management"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-6",
+      "title": "Access Control Management",
+      "description": "Use processes and tools to create, assign, manage, and revoke access credentials and privileges for user, administrator, and service accounts.",
+      "required_tags": [
+        "access-control",
+        "identity-management"
+      ],
+      "optional_tags": [
+        "MFA",
+        "privileged-access-management",
+        "RBAC",
+        "SSO"
+      ],
+      "evidence": [
+        "Access control policy",
+        "User permissions report",
+        "Role assignment documentation",
+        "Least privilege implementation evidence",
+        "MFA enrollment report"
+      ],
+      "sub_controls": [
+        {
+          "id": "6.1",
+          "title": "Establish an Access Granting Process"
+        },
+        {
+          "id": "6.2",
+          "title": "Establish an Access Revoking Process"
+        },
+        {
+          "id": "6.3",
+          "title": "Require MFA for Externally-Exposed Applications"
+        },
+        {
+          "id": "6.4",
+          "title": "Require MFA for Remote Network Access"
+        },
+        {
+          "id": "6.5",
+          "title": "Require MFA for Administrative Access"
+        },
+        {
+          "id": "6.6",
+          "title": "Establish and Maintain an Inventory of Authentication and Authorization Systems"
+        },
+        {
+          "id": "6.7",
+          "title": "Centralize Access Control"
+        },
+        {
+          "id": "6.8",
+          "title": "Define and Maintain Role-Based Access Control"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-7",
+      "title": "Continuous Vulnerability Management",
+      "description": "Develop a plan to continuously assess and track vulnerabilities on all enterprise assets to remediate and minimize the window of opportunity for attackers.",
+      "required_tags": [
+        "vulnerability-scanning",
+        "patch-management"
+      ],
+      "optional_tags": [
+        "asset-inventory",
+        "cloud-security-posture",
+        "compliance-scanning",
+        "container-security"
+      ],
+      "evidence": [
+        "Vulnerability scan reports",
+        "Patch management records",
+        "Remediation tracking spreadsheet/ticket log",
+        "Vulnerability SLA policy",
+        "Scan schedule documentation"
+      ],
+      "sub_controls": [
+        {
+          "id": "7.1",
+          "title": "Establish and Maintain a Vulnerability Management Process"
+        },
+        {
+          "id": "7.2",
+          "title": "Establish and Maintain a Remediation Process"
+        },
+        {
+          "id": "7.3",
+          "title": "Perform Automated Operating System Patch Management"
+        },
+        {
+          "id": "7.4",
+          "title": "Perform Automated Application Patch Management"
+        },
+        {
+          "id": "7.5",
+          "title": "Perform Automated Vulnerability Scans of Internal Enterprise Assets"
+        },
+        {
+          "id": "7.6",
+          "title": "Perform Automated Vulnerability Scans of Externally-Exposed Enterprise Assets"
+        },
+        {
+          "id": "7.7",
+          "title": "Remediate Detected Vulnerabilities"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-8",
+      "title": "Audit Log Management",
+      "description": "Collect, alert, review, and retain audit logs of events that could help detect, understand, or recover from an attack.",
+      "required_tags": [
+        "log-management",
+        "security-monitoring"
+      ],
+      "optional_tags": [
+        "SIEM",
+        "alerting",
+        "cloud-security-posture",
+        "log-retention",
+        "soar"
+      ],
+      "evidence": [
+        "Log management policy",
+        "Sample log outputs from key systems",
+        "Log retention configuration",
+        "SIEM dashboard screenshots",
+        "Alert rule configurations"
+      ],
+      "sub_controls": [
+        {
+          "id": "8.1",
+          "title": "Establish and Maintain an Audit Log Management Process"
+        },
+        {
+          "id": "8.2",
+          "title": "Collect Audit Logs"
+        },
+        {
+          "id": "8.3",
+          "title": "Ensure Adequate Audit Log Storage"
+        },
+        {
+          "id": "8.4",
+          "title": "Standardize Time Synchronization"
+        },
+        {
+          "id": "8.5",
+          "title": "Collect Detailed Audit Logs"
+        },
+        {
+          "id": "8.6",
+          "title": "Collect DNS Query Audit Logs"
+        },
+        {
+          "id": "8.7",
+          "title": "Collect URL Request Audit Logs"
+        },
+        {
+          "id": "8.8",
+          "title": "Collect Command-Line Audit Logs"
+        },
+        {
+          "id": "8.9",
+          "title": "Centralize Audit Logs"
+        },
+        {
+          "id": "8.10",
+          "title": "Retain Audit Logs"
+        },
+        {
+          "id": "8.11",
+          "title": "Conduct Audit Log Reviews"
+        },
+        {
+          "id": "8.12",
+          "title": "Collect Service Provider Logs"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-9",
+      "title": "Email and Web Browser Protections",
+      "description": "Improve protections and detections of threats from email and web vectors.",
+      "required_tags": [
+        "email-filtering",
+        "web-filtering"
+      ],
+      "optional_tags": [
+        "anti-phishing",
+        "dns-filtering",
+        "url-filtering"
+      ],
+      "evidence": [
+        "Email filtering configuration screenshots",
+        "Web proxy/filter policy",
+        "Anti-phishing configuration",
+        "DNS filter block reports",
+        "Blocked URL/domain evidence"
+      ],
+      "sub_controls": [
+        {
+          "id": "9.1",
+          "title": "Ensure Use of Only Fully Supported Browsers and Email Clients"
+        },
+        {
+          "id": "9.2",
+          "title": "Use DNS Filtering Services"
+        },
+        {
+          "id": "9.3",
+          "title": "Maintain and Enforce Network-Based URL Filters"
+        },
+        {
+          "id": "9.4",
+          "title": "Restrict Unnecessary or Unauthorized Browser and Email Client Extensions"
+        },
+        {
+          "id": "9.5",
+          "title": "Implement DMARC"
+        },
+        {
+          "id": "9.6",
+          "title": "Block Unnecessary File Types"
+        },
+        {
+          "id": "9.7",
+          "title": "Deploy and Maintain Email Server Anti-Malware Protections"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-10",
+      "title": "Malware Defenses",
+      "description": "Prevent or control the installation, spread, and execution of malicious applications, code, or scripts on enterprise assets.",
+      "required_tags": [
+        "malware-detection",
+        "endpoint-protection"
+      ],
+      "optional_tags": [
+        "behavioral-analytics",
+        "EDR",
+        "application-allowlisting"
+      ],
+      "evidence": [
+        "AV/EDR deployment report",
+        "Malware detection logs",
+        "Quarantine records",
+        "Endpoint protection policy",
+        "Threat detection coverage report"
+      ],
+      "sub_controls": [
+        {
+          "id": "10.1",
+          "title": "Deploy and Maintain Anti-Malware Software"
+        },
+        {
+          "id": "10.2",
+          "title": "Configure Automatic Anti-Malware Signature Updates"
+        },
+        {
+          "id": "10.3",
+          "title": "Disable Autorun and Autoplay for Removable Media"
+        },
+        {
+          "id": "10.4",
+          "title": "Configure Automatic Anti-Malware Scanning of Removable Media"
+        },
+        {
+          "id": "10.5",
+          "title": "Enable Anti-Exploitation Features"
+        },
+        {
+          "id": "10.6",
+          "title": "Centrally Manage Anti-Malware Software"
+        },
+        {
+          "id": "10.7",
+          "title": "Use Behavior-Based Anti-Malware Software"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-11",
+      "title": "Data Recovery",
+      "description": "Establish and maintain data recovery practices sufficient to restore in-scope enterprise assets to a pre-incident and trusted state.",
+      "required_tags": [
+        "backup",
+        "data-recovery"
+      ],
+      "optional_tags": [
+        "backup-testing",
+        "business-continuity"
+      ],
+      "evidence": [
+        "Backup configuration documentation",
+        "Restore test records",
+        "Backup success/failure logs",
+        "Recovery time objective (RTO) documentation",
+        "Business continuity plan"
+      ],
+      "sub_controls": [
+        {
+          "id": "11.1",
+          "title": "Establish and Maintain a Data Recovery Process"
+        },
+        {
+          "id": "11.2",
+          "title": "Perform Automated Backups"
+        },
+        {
+          "id": "11.3",
+          "title": "Protect Recovery Data"
+        },
+        {
+          "id": "11.4",
+          "title": "Establish and Maintain an Isolated Instance of Recovery Data"
+        },
+        {
+          "id": "11.5",
+          "title": "Test Data Recovery"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-12",
+      "title": "Network Infrastructure Management",
+      "description": "Establish, implement, and actively manage network devices to prevent attackers from exploiting vulnerable network services and access points.",
+      "required_tags": [
+        "network-access-control",
+        "firewall"
+      ],
+      "optional_tags": [
+        "network-monitoring",
+        "network-segmentation",
+        "traffic-filtering",
+        "vpn"
+      ],
+      "evidence": [
+        "Network diagram",
+        "Firewall rule set documentation",
+        "VLAN/segmentation configuration",
+        "Network device inventory",
+        "Change management records"
+      ],
+      "sub_controls": [
+        {
+          "id": "12.1",
+          "title": "Ensure Network Infrastructure is Up-to-Date"
+        },
+        {
+          "id": "12.2",
+          "title": "Establish and Maintain a Secure Network Architecture"
+        },
+        {
+          "id": "12.3",
+          "title": "Securely Manage Network Infrastructure"
+        },
+        {
+          "id": "12.4",
+          "title": "Establish and Maintain Architecture Diagram(s)"
+        },
+        {
+          "id": "12.5",
+          "title": "Centralize Network Authentication, Authorization, and Auditing (AAA)"
+        },
+        {
+          "id": "12.6",
+          "title": "Use of Secure Network Management and Communication Protocols"
+        },
+        {
+          "id": "12.7",
+          "title": "Ensure Remote Devices Utilize a VPN and are Connecting to an Enterprise's AAA Infrastructure"
+        },
+        {
+          "id": "12.8",
+          "title": "Establish and Maintain Dedicated Computing Resources for All Administrative Work"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-13",
+      "title": "Network Monitoring and Defense",
+      "description": "Operate processes and tooling to establish and maintain comprehensive network monitoring and defense against security threats.",
+      "required_tags": [
+        "network-monitoring",
+        "IDS-IPS"
+      ],
+      "optional_tags": [
+        "SIEM",
+        "alerting",
+        "ndr",
+        "soar",
+        "threat-intelligence",
+        "traffic-analysis",
+        "vpn",
+        "waf"
+      ],
+      "evidence": [
+        "Network monitoring configuration",
+        "IDS/IPS alert logs",
+        "Traffic analysis reports",
+        "Network baseline documentation",
+        "Alert escalation procedures"
+      ],
+      "sub_controls": [
+        {
+          "id": "13.1",
+          "title": "Centralize Security Event Alerting"
+        },
+        {
+          "id": "13.2",
+          "title": "Deploy a Host-Based Intrusion Detection Solution"
+        },
+        {
+          "id": "13.3",
+          "title": "Deploy a Network Intrusion Detection Solution"
+        },
+        {
+          "id": "13.4",
+          "title": "Perform Traffic Filtering Between Network Segments"
+        },
+        {
+          "id": "13.5",
+          "title": "Manage Access Control for Remote Assets"
+        },
+        {
+          "id": "13.6",
+          "title": "Collect Network Traffic Flow Logs"
+        },
+        {
+          "id": "13.7",
+          "title": "Deploy a Host-Based Intrusion Prevention Solution"
+        },
+        {
+          "id": "13.8",
+          "title": "Deploy a Network Intrusion Prevention Solution"
+        },
+        {
+          "id": "13.9",
+          "title": "Deploy Port-Level Access Control"
+        },
+        {
+          "id": "13.10",
+          "title": "Perform Application Layer Filtering"
+        },
+        {
+          "id": "13.11",
+          "title": "Tune Security Event Alerting Thresholds"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-14",
+      "title": "Security Awareness and Skills Training",
+      "description": "Establish and maintain a security awareness program to influence behavior among the workforce to be security conscious.",
+      "required_tags": [
+        "security-training",
+        "phishing-simulation"
+      ],
+      "optional_tags": [
+        "security-awareness-program"
+      ],
+      "evidence": [
+        "Training completion records",
+        "Phishing simulation results",
+        "Training curriculum",
+        "Training policy",
+        "Employee acknowledgment records"
+      ],
+      "sub_controls": [
+        {
+          "id": "14.1",
+          "title": "Establish and Maintain a Security Awareness Program"
+        },
+        {
+          "id": "14.2",
+          "title": "Train Workforce Members to Recognize Social Engineering Attacks"
+        },
+        {
+          "id": "14.3",
+          "title": "Train Workforce Members on Authentication Best Practices"
+        },
+        {
+          "id": "14.4",
+          "title": "Train Workforce on Data Handling Best Practices"
+        },
+        {
+          "id": "14.5",
+          "title": "Train Workforce Members on Causes of Unintentional Data Exposure"
+        },
+        {
+          "id": "14.6",
+          "title": "Train Workforce Members on Recognizing and Reporting Security Incidents"
+        },
+        {
+          "id": "14.7",
+          "title": "Train Workforce on How to Identify and Report if Their Enterprise Assets are Missing Security Updates"
+        },
+        {
+          "id": "14.8",
+          "title": "Train Workforce on the Dangers of Connecting to and Transmitting Enterprise Data Over Insecure Networks"
+        },
+        {
+          "id": "14.9",
+          "title": "Conduct Role-Specific Security Awareness and Skills Training"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-15",
+      "title": "Service Provider Management",
+      "description": "Develop a process to evaluate service providers who hold sensitive data or are responsible for critical IT platforms.",
+      "required_tags": [
+        "vendor-management",
+        "third-party-risk"
+      ],
+      "optional_tags": [
+        "contract-management",
+        "itsm",
+        "vendor-assessment"
+      ],
+      "evidence": [
+        "Vendor/service provider inventory",
+        "Vendor contracts with security requirements",
+        "Third-party risk assessments",
+        "Vendor security questionnaires",
+        "SLA documentation"
+      ],
+      "sub_controls": [
+        {
+          "id": "15.1",
+          "title": "Establish and Maintain an Inventory of Service Providers"
+        },
+        {
+          "id": "15.2",
+          "title": "Establish and Maintain a Service Provider Management Policy"
+        },
+        {
+          "id": "15.3",
+          "title": "Classify Service Providers"
+        },
+        {
+          "id": "15.4",
+          "title": "Ensure Service Provider Contracts Include Security Requirements"
+        },
+        {
+          "id": "15.5",
+          "title": "Assess Service Providers"
+        },
+        {
+          "id": "15.6",
+          "title": "Monitor Service Providers"
+        },
+        {
+          "id": "15.7",
+          "title": "Securely Decommission Service Providers"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-16",
+      "title": "Application Software Security",
+      "description": "Manage the security life cycle of in-house developed, hosted, or acquired software to prevent, detect, and remediate security weaknesses.",
+      "required_tags": [
+        "application-security",
+        "secure-sdlc"
+      ],
+      "optional_tags": [
+        "code-review",
+        "container-security",
+        "dast",
+        "dependency-scanning",
+        "sast",
+        "waf"
+      ],
+      "evidence": [
+        "Application security policy",
+        "Code scan results (SAST/DAST)",
+        "Penetration test reports",
+        "Secure coding standards",
+        "Software bill of materials (SBOM)"
+      ],
+      "sub_controls": [
+        {
+          "id": "16.1",
+          "title": "Establish and Maintain a Secure Application Development Process"
+        },
+        {
+          "id": "16.2",
+          "title": "Establish and Maintain a Process to Accept and Address Software Vulnerabilities"
+        },
+        {
+          "id": "16.3",
+          "title": "Perform Root Cause Analysis on Security Vulnerabilities"
+        },
+        {
+          "id": "16.4",
+          "title": "Establish and Manage an Inventory of Third-Party Software Components"
+        },
+        {
+          "id": "16.5",
+          "title": "Use Up-to-Date and Trusted Third-Party Software Components"
+        },
+        {
+          "id": "16.6",
+          "title": "Establish and Maintain a Severity Rating System and Process for Application Vulnerabilities"
+        },
+        {
+          "id": "16.7",
+          "title": "Use Standard Hardening Configuration Templates for Application Infrastructure"
+        },
+        {
+          "id": "16.8",
+          "title": "Separate Production and Non-Production Systems"
+        },
+        {
+          "id": "16.9",
+          "title": "Train Developers in Application Security Concepts and Secure Coding"
+        },
+        {
+          "id": "16.10",
+          "title": "Apply Secure Design Principles in Application Architectures"
+        },
+        {
+          "id": "16.11",
+          "title": "Leverage Vetted Modules or Services for Application Security Components"
+        },
+        {
+          "id": "16.12",
+          "title": "Implement Code-Level Security Checks"
+        },
+        {
+          "id": "16.13",
+          "title": "Conduct Application Penetration Testing"
+        },
+        {
+          "id": "16.14",
+          "title": "Conduct Threat Modeling"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-17",
+      "title": "Incident Response Management",
+      "description": "Establish a program to develop and maintain an incident response capability to prepare, detect, and quickly respond to an attack.",
+      "required_tags": [
+        "incident-response",
+        "incident-management"
+      ],
+      "optional_tags": [
+        "SIEM",
+        "alerting",
+        "forensics",
+        "itsm",
+        "playbooks",
+        "soar",
+        "threat-intelligence"
+      ],
+      "evidence": [
+        "Incident response plan",
+        "IR team roles and responsibilities",
+        "Incident log",
+        "Post-incident review records",
+        "IR playbooks",
+        "Tabletop exercise records"
+      ],
+      "sub_controls": [
+        {
+          "id": "17.1",
+          "title": "Designate Personnel to Manage Incident Handling"
+        },
+        {
+          "id": "17.2",
+          "title": "Establish and Maintain Contact Information for Reporting Security Incidents"
+        },
+        {
+          "id": "17.3",
+          "title": "Establish and Maintain an Enterprise Process for Reporting Incidents"
+        },
+        {
+          "id": "17.4",
+          "title": "Establish and Maintain an Incident Response Process"
+        },
+        {
+          "id": "17.5",
+          "title": "Assign Key Roles and Responsibilities"
+        },
+        {
+          "id": "17.6",
+          "title": "Define Mechanisms for Communicating During Incident Response"
+        },
+        {
+          "id": "17.7",
+          "title": "Conduct Routine Incident Response Exercises"
+        },
+        {
+          "id": "17.8",
+          "title": "Conduct Post-Incident Reviews"
+        },
+        {
+          "id": "17.9",
+          "title": "Establish and Maintain Security Incident Thresholds"
+        }
+      ]
+    },
+    {
+      "control_id": "CIS-18",
+      "title": "Penetration Testing",
+      "description": "Test the effectiveness and resiliency of enterprise assets through identifying and exploiting weaknesses in controls, and informing investments to improve the overall security program.",
+      "required_tags": [
+        "penetration-testing"
+      ],
+      "optional_tags": [
+        "red-team",
+        "vulnerability-scanning",
+        "purple-team"
+      ],
+      "evidence": [
+        "Penetration test report",
+        "Scope and rules of engagement documentation",
+        "Remediation tracking from pentest findings",
+        "Retest results"
+      ],
+      "sub_controls": [
+        {
+          "id": "18.1",
+          "title": "Establish and Maintain a Penetration Testing Program"
+        },
+        {
+          "id": "18.2",
+          "title": "Perform Periodic External Penetration Tests"
+        },
+        {
+          "id": "18.3",
+          "title": "Remediate Penetration Test Findings"
+        },
+        {
+          "id": "18.4",
+          "title": "Validate Security Measures"
+        },
+        {
+          "id": "18.5",
+          "title": "Perform Periodic Internal Penetration Tests"
+        }
+      ]
+    }
+  ]
+}

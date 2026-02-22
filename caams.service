@@ -1,0 +1,52 @@
+[Unit]
+Description=CAAMS — Cybersecurity Architecture and Assessment Management System
+Documentation=https://github.com/naterohrer/caams
+After=network.target
+# If you are using a remote database, add the appropriate dependency here,
+# e.g.: After=postgresql.service
+# Give up restarting after 3 failures within 60 seconds.
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=caams
+Group=caams
+WorkingDirectory=/opt/caams
+
+# Secret key and any other runtime env vars live in this file.
+# The file is created by install_service.sh (chmod 640, root:caams).
+EnvironmentFile=/etc/caams.env
+
+ExecStart=/usr/bin/python3 -m uvicorn app.main:app \
+    --host 0.0.0.0 \
+    --port 8443 \
+    --ssl-certfile /opt/caams/certs/cert.pem \
+    --ssl-keyfile  /opt/caams/certs/key.pem
+
+# Restart policy — come back up after a crash.
+# The burst limit (3 failures / 60 s) lives in [Unit] above.
+Restart=on-failure
+RestartSec=5s
+
+# --- Sandboxing ---
+# These directives reduce the blast radius if the app is compromised.
+# Adjust ReadWritePaths if you move the database or log files elsewhere.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/caams
+
+# Drop all Linux capabilities — uvicorn binds to port 8443 (>1024), so
+# CAP_NET_BIND_SERVICE is not needed.
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+# Logging — journal captures stdout/stderr automatically.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=caams
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,513 @@
+{
+  "name": "HIPAA Security Rule",
+  "version": "45 CFR Part 164",
+  "controls": [
+    {
+      "control_id": "HIPAA-AS-1",
+      "title": "Security Management Process (\u00a7164.308(a)(1))",
+      "description": "Implement policies and procedures to prevent, detect, contain, and correct security violations. Includes risk analysis and risk management.",
+      "required_tags": [
+        "vulnerability-scanning",
+        "security-monitoring"
+      ],
+      "optional_tags": [
+        "SIEM",
+        "alerting",
+        "cloud-security-posture",
+        "compliance-scanning"
+      ],
+      "evidence": [
+        "Risk analysis documentation covering ePHI systems",
+        "Risk management plan and treatment decisions",
+        "Sanction policy for workforce violations",
+        "Information system activity review records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-1.a",
+          "title": "Risk Analysis (Required) \u2014 Conduct accurate and thorough assessment of the potential risks to ePHI"
+        },
+        {
+          "id": "AS-1.b",
+          "title": "Risk Management (Required) \u2014 Implement security measures sufficient to reduce risks to a reasonable and appropriate level"
+        },
+        {
+          "id": "AS-1.c",
+          "title": "Sanction Policy (Required) \u2014 Apply appropriate sanctions against workforce members who fail to comply"
+        },
+        {
+          "id": "AS-1.d",
+          "title": "Information System Activity Review (Required) \u2014 Implement procedures to regularly review records of information system activity"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-2",
+      "title": "Assigned Security Responsibility (\u00a7164.308(a)(2))",
+      "description": "Identify the security official responsible for the development and implementation of the policies and procedures required by this subpart.",
+      "required_tags": [],
+      "optional_tags": [
+        "incident-management",
+        "log-management"
+      ],
+      "evidence": [
+        "Documented appointment of Security Officer role",
+        "Security Officer responsibilities and accountability records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-2.a",
+          "title": "Security Official (Required) \u2014 Identify the security official who is responsible for the development and implementation of policies and procedures"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-3",
+      "title": "Workforce Security (\u00a7164.308(a)(3))",
+      "description": "Implement policies and procedures to ensure all members of the workforce have appropriate access to ePHI and to prevent those who do not have access from obtaining it.",
+      "required_tags": [
+        "access-control",
+        "RBAC"
+      ],
+      "optional_tags": [
+        "identity-management",
+        "log-management",
+        "privileged-access-management"
+      ],
+      "evidence": [
+        "Workforce authorization and supervision procedures",
+        "Clearance and onboarding access provisioning records",
+        "Offboarding / access termination procedures and evidence"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-3.a",
+          "title": "Authorization and/or Supervision (Addressable) \u2014 Implement procedures for the authorization and/or supervision of workforce members"
+        },
+        {
+          "id": "AS-3.b",
+          "title": "Workforce Clearance Procedure (Addressable) \u2014 Implement procedures to determine that the access of a workforce member to ePHI is appropriate"
+        },
+        {
+          "id": "AS-3.c",
+          "title": "Termination Procedures (Addressable) \u2014 Implement procedures for terminating access to ePHI"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-4",
+      "title": "Information Access Management (\u00a7164.308(a)(4))",
+      "description": "Implement policies and procedures for authorizing access to ePHI consistent with the minimum necessary standard.",
+      "required_tags": [
+        "access-control",
+        "RBAC"
+      ],
+      "optional_tags": [
+        "MFA",
+        "SSO",
+        "identity-management",
+        "secrets-management"
+      ],
+      "evidence": [
+        "Access authorization policy and approval workflow",
+        "Access establishment and modification procedures",
+        "Periodic access review records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-4.a",
+          "title": "Isolating Health Care Clearinghouse Functions (Required) \u2014 Implement policies and procedures to protect ePHI maintained by a health care clearinghouse"
+        },
+        {
+          "id": "AS-4.b",
+          "title": "Access Authorization (Addressable) \u2014 Implement policies and procedures for granting access to ePHI"
+        },
+        {
+          "id": "AS-4.c",
+          "title": "Access Establishment and Modification (Addressable) \u2014 Implement policies and procedures that establish, document, review, and modify user access rights to a workstation, transaction, program, or process"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-5",
+      "title": "Security Awareness and Training (\u00a7164.308(a)(5))",
+      "description": "Implement a security awareness and training program for all members of the workforce, including management.",
+      "required_tags": [
+        "security-awareness-program",
+        "security-training"
+      ],
+      "optional_tags": [
+        "phishing-simulation",
+        "anti-phishing"
+      ],
+      "evidence": [
+        "Security awareness training completion records",
+        "Training curriculum and materials",
+        "Phishing simulation results",
+        "Malicious software protection training records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-5.a",
+          "title": "Security Reminders (Addressable) \u2014 Periodic security updates"
+        },
+        {
+          "id": "AS-5.b",
+          "title": "Protection from Malicious Software (Addressable) \u2014 Procedures for guarding against, detecting, and reporting malicious software"
+        },
+        {
+          "id": "AS-5.c",
+          "title": "Log-in Monitoring (Addressable) \u2014 Procedures for monitoring log-in attempts and reporting discrepancies"
+        },
+        {
+          "id": "AS-5.d",
+          "title": "Password Management (Addressable) \u2014 Procedures for creating, changing, and safeguarding passwords"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-6",
+      "title": "Security Incident Procedures (\u00a7164.308(a)(6))",
+      "description": "Implement policies and procedures to address security incidents, including response and reporting of security incidents.",
+      "required_tags": [
+        "incident-management",
+        "alerting"
+      ],
+      "optional_tags": [
+        "SIEM",
+        "forensics",
+        "itsm",
+        "security-monitoring",
+        "soar"
+      ],
+      "evidence": [
+        "Incident response plan covering ePHI breaches",
+        "Security incident log",
+        "Post-incident review documentation",
+        "Breach notification procedure"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-6.a",
+          "title": "Response and Reporting (Required) \u2014 Identify and respond to suspected or known security incidents"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-7",
+      "title": "Contingency Plan (\u00a7164.308(a)(7))",
+      "description": "Establish policies and procedures for responding to an emergency that damages systems containing ePHI, including data backup, disaster recovery, and emergency mode operation.",
+      "required_tags": [
+        "backup",
+        "data-recovery"
+      ],
+      "optional_tags": [
+        "backup-testing",
+        "log-management"
+      ],
+      "evidence": [
+        "Data backup plan and backup execution logs",
+        "Disaster recovery plan for ePHI systems",
+        "Business continuity / emergency mode operation plan",
+        "Backup restoration test records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-7.a",
+          "title": "Data Backup Plan (Required) \u2014 Establish and implement procedures to create and maintain retrievable exact copies of ePHI"
+        },
+        {
+          "id": "AS-7.b",
+          "title": "Disaster Recovery Plan (Required) \u2014 Establish procedures to restore any loss of data"
+        },
+        {
+          "id": "AS-7.c",
+          "title": "Emergency Mode Operation Plan (Required) \u2014 Establish procedures to enable continuation of critical business processes"
+        },
+        {
+          "id": "AS-7.d",
+          "title": "Testing and Revision Procedures (Addressable) \u2014 Implement procedures for periodic testing and revision of contingency plans"
+        },
+        {
+          "id": "AS-7.e",
+          "title": "Applications and Data Criticality Analysis (Addressable) \u2014 Assess the relative criticality of specific applications and data"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-AS-8",
+      "title": "Evaluation (\u00a7164.308(a)(8))",
+      "description": "Perform periodic technical and non-technical evaluations to assess the extent to which security policies and procedures meet the requirements of this subpart.",
+      "required_tags": [
+        "vulnerability-scanning",
+        "compliance-scanning"
+      ],
+      "optional_tags": [
+        "behavioral-analytics",
+        "security-monitoring",
+        "log-management"
+      ],
+      "evidence": [
+        "Periodic security assessment or audit reports",
+        "Vulnerability scan and penetration test results",
+        "Policy review and update records"
+      ],
+      "sub_controls": [
+        {
+          "id": "AS-8.a",
+          "title": "Evaluation (Required) \u2014 Perform a periodic technical and non-technical evaluation in response to environmental or operational changes"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-PS-1",
+      "title": "Facility Access Controls (\u00a7164.310(a))",
+      "description": "Implement policies and procedures to limit physical access to electronic information systems and the facilities in which they are housed, while ensuring that properly authorized access is allowed.",
+      "required_tags": [],
+      "optional_tags": [
+        "access-control",
+        "log-management",
+        "asset-inventory"
+      ],
+      "evidence": [
+        "Facility access control policy",
+        "Badge and key access logs for server rooms / data centers",
+        "Visitor access logs",
+        "Contingency operations access plan"
+      ],
+      "sub_controls": [
+        {
+          "id": "PS-1.a",
+          "title": "Contingency Operations (Addressable) \u2014 Establish and implement procedures that allow facility access in support of restoration of lost data"
+        },
+        {
+          "id": "PS-1.b",
+          "title": "Facility Security Plan (Addressable) \u2014 Implement policies and procedures to safeguard the facility and equipment"
+        },
+        {
+          "id": "PS-1.c",
+          "title": "Access Control and Validation Procedures (Addressable) \u2014 Implement procedures to control and validate a person's access to facilities"
+        },
+        {
+          "id": "PS-1.d",
+          "title": "Maintenance Records (Addressable) \u2014 Implement policies and procedures to document repairs and modifications to the physical components"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-PS-2",
+      "title": "Workstation Use and Security (\u00a7164.310(b)/(c))",
+      "description": "Implement policies and procedures specifying proper functions performed on workstations that access ePHI, and physical safeguards for workstations.",
+      "required_tags": [
+        "endpoint-protection",
+        "configuration-management"
+      ],
+      "optional_tags": [
+        "patch-management",
+        "application-allowlisting",
+        "endpoint-monitoring"
+      ],
+      "evidence": [
+        "Workstation use policy",
+        "Screen-lock and session-timeout configuration evidence",
+        "Workstation hardening baseline",
+        "MDM/endpoint management enrollment report"
+      ],
+      "sub_controls": [
+        {
+          "id": "PS-2.a",
+          "title": "Workstation Use (Required) \u2014 Implement policies and procedures that specify the proper functions to be performed, the manner in which those functions are to be performed, and the physical attributes of the surroundings"
+        },
+        {
+          "id": "PS-2.b",
+          "title": "Workstation Security (Required) \u2014 Implement physical safeguards for all workstations that access ePHI"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-PS-3",
+      "title": "Device and Media Controls (\u00a7164.310(d))",
+      "description": "Implement policies and procedures that govern the receipt and removal of hardware and electronic media that contain ePHI, and movement of these items within the facility.",
+      "required_tags": [
+        "dlp",
+        "data-encryption"
+      ],
+      "optional_tags": [
+        "asset-inventory",
+        "endpoint-protection"
+      ],
+      "evidence": [
+        "Media disposal and sanitization records",
+        "Encryption-at-rest configuration for portable devices",
+        "DLP policy covering removable media and ePHI",
+        "Hardware/media inventory and movement log"
+      ],
+      "sub_controls": [
+        {
+          "id": "PS-3.a",
+          "title": "Disposal (Required) \u2014 Implement policies and procedures to address the final disposition of ePHI and/or the hardware or electronic media"
+        },
+        {
+          "id": "PS-3.b",
+          "title": "Media Re-use (Required) \u2014 Implement procedures for removal of ePHI from electronic media before it is made available for re-use"
+        },
+        {
+          "id": "PS-3.c",
+          "title": "Accountability (Addressable) \u2014 Maintain a record of the movements of hardware and electronic media"
+        },
+        {
+          "id": "PS-3.d",
+          "title": "Data Backup and Storage (Addressable) \u2014 Create a retrievable exact copy of ePHI before movement of equipment"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-TS-1",
+      "title": "Access Control (\u00a7164.312(a))",
+      "description": "Implement technical policies and procedures for electronic information systems that maintain ePHI to allow access only to those persons or software programs that have been granted access rights.",
+      "required_tags": [
+        "access-control",
+        "RBAC",
+        "MFA"
+      ],
+      "optional_tags": [
+        "SSO",
+        "identity-management",
+        "privileged-access-management",
+        "secrets-management",
+        "vpn"
+      ],
+      "evidence": [
+        "Unique user identifier policy and implementation evidence",
+        "Emergency access procedure",
+        "Automatic logoff configuration",
+        "Encryption/decryption configuration for ePHI systems"
+      ],
+      "sub_controls": [
+        {
+          "id": "TS-1.a",
+          "title": "Unique User Identification (Required) \u2014 Assign a unique name and/or number for identifying and tracking user identity"
+        },
+        {
+          "id": "TS-1.b",
+          "title": "Emergency Access Procedure (Required) \u2014 Establish and implement procedures for obtaining necessary ePHI during an emergency"
+        },
+        {
+          "id": "TS-1.c",
+          "title": "Automatic Logoff (Addressable) \u2014 Implement electronic procedures that terminate an electronic session after a predetermined time of inactivity"
+        },
+        {
+          "id": "TS-1.d",
+          "title": "Encryption and Decryption (Addressable) \u2014 Implement a mechanism to encrypt and decrypt ePHI"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-TS-2",
+      "title": "Audit Controls (\u00a7164.312(b))",
+      "description": "Implement hardware, software, and/or procedural mechanisms that record and examine activity in information systems that contain or use ePHI.",
+      "required_tags": [
+        "log-management",
+        "log-retention",
+        "SIEM"
+      ],
+      "optional_tags": [
+        "security-monitoring",
+        "alerting",
+        "behavioral-analytics"
+      ],
+      "evidence": [
+        "Audit logging configuration for all ePHI systems",
+        "Log retention configuration (minimum 6 years recommended)",
+        "Regular audit log review records",
+        "SIEM alert rules for ePHI access anomalies"
+      ],
+      "sub_controls": [
+        {
+          "id": "TS-2.a",
+          "title": "Audit Controls (Required) \u2014 Implement hardware, software, and/or procedural mechanisms that record and examine activity in information systems that contain or use ePHI"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-TS-3",
+      "title": "Integrity Controls (\u00a7164.312(c))",
+      "description": "Implement policies and procedures to protect ePHI from improper alteration or destruction, and ensure it has not been altered or destroyed in an unauthorized manner.",
+      "required_tags": [
+        "dlp"
+      ],
+      "optional_tags": [
+        "data-encryption",
+        "log-management",
+        "backup"
+      ],
+      "evidence": [
+        "Integrity verification mechanism configuration",
+        "DLP policy rules covering ePHI modification controls",
+        "Data integrity audit records"
+      ],
+      "sub_controls": [
+        {
+          "id": "TS-3.a",
+          "title": "Mechanism to Authenticate ePHI (Addressable) \u2014 Implement electronic mechanisms to corroborate that ePHI has not been altered or destroyed in an unauthorized manner"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-TS-4",
+      "title": "Person or Entity Authentication (\u00a7164.312(d))",
+      "description": "Implement procedures to verify that a person or entity seeking access to ePHI is the one claimed.",
+      "required_tags": [
+        "MFA",
+        "identity-management"
+      ],
+      "optional_tags": [
+        "SSO",
+        "RBAC",
+        "privileged-access-management"
+      ],
+      "evidence": [
+        "MFA configuration for all ePHI system access",
+        "Authentication policy documentation",
+        "Evidence of strong password or passwordless controls"
+      ],
+      "sub_controls": [
+        {
+          "id": "TS-4.a",
+          "title": "Person or Entity Authentication (Required) \u2014 Implement procedures to verify that a person or entity seeking access to ePHI is the one claimed"
+        }
+      ]
+    },
+    {
+      "control_id": "HIPAA-TS-5",
+      "title": "Transmission Security (\u00a7164.312(e))",
+      "description": "Implement technical security measures to guard against unauthorized access to ePHI that is being transmitted over an electronic communications network.",
+      "required_tags": [
+        "data-encryption"
+      ],
+      "optional_tags": [
+        "firewall",
+        "network-monitoring",
+        "secrets-management",
+        "traffic-filtering",
+        "vpn"
+      ],
+      "evidence": [
+        "Encryption-in-transit configuration for all ePHI transmissions",
+        "TLS certificate inventory and expiry monitoring",
+        "VPN or encrypted channel configuration for remote access",
+        "Scan results confirming no unencrypted ePHI transmission"
+      ],
+      "sub_controls": [
+        {
+          "id": "TS-5.a",
+          "title": "Integrity Controls (Addressable) \u2014 Implement security measures to ensure that electronically transmitted ePHI is not improperly modified"
+        },
+        {
+          "id": "TS-5.b",
+          "title": "Encryption (Addressable) \u2014 Implement a mechanism to encrypt ePHI in transit"
+        }
+      ]
+    }
+  ]
+}

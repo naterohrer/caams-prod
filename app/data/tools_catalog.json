@@ -1,0 +1,1264 @@
+[
+  {
+    "name": "SentinelOne",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "endpoint-monitoring",
+      "asset-inventory"
+    ]
+  },
+  {
+    "name": "Sophos Intercept X",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "antivirus",
+      "web-filtering",
+      "application-allowlisting"
+    ]
+  },
+  {
+    "name": "CrowdStrike Falcon",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "asset-inventory",
+      "endpoint-monitoring",
+      "threat-intelligence"
+    ]
+  },
+  {
+    "name": "Carbon Black",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "application-allowlisting"
+    ]
+  },
+  {
+    "name": "Microsoft Defender for Endpoint",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "vulnerability-scanning",
+      "asset-inventory",
+      "endpoint-monitoring"
+    ]
+  },
+  {
+    "name": "Cisco Firewall (ASA/FTD)",
+    "category": "Firewall",
+    "capabilities": [
+      "firewall",
+      "network-access-control",
+      "traffic-filtering",
+      "network-monitoring",
+      "IDS-IPS",
+      "network-segmentation"
+    ]
+  },
+  {
+    "name": "Palo Alto Networks NGFW",
+    "category": "Firewall",
+    "capabilities": [
+      "firewall",
+      "network-access-control",
+      "traffic-filtering",
+      "IDS-IPS",
+      "network-monitoring",
+      "network-segmentation",
+      "url-filtering",
+      "dns-filtering"
+    ]
+  },
+  {
+    "name": "Fortinet FortiGate",
+    "category": "Firewall",
+    "capabilities": [
+      "firewall",
+      "network-access-control",
+      "traffic-filtering",
+      "IDS-IPS",
+      "network-monitoring",
+      "web-filtering",
+      "network-segmentation"
+    ]
+  },
+  {
+    "name": "Sophos Firewall",
+    "category": "Firewall",
+    "capabilities": [
+      "firewall",
+      "network-access-control",
+      "traffic-filtering",
+      "IDS-IPS",
+      "network-monitoring",
+      "web-filtering",
+      "dns-filtering"
+    ]
+  },
+  {
+    "name": "Okta",
+    "category": "IAM",
+    "capabilities": [
+      "identity-management",
+      "MFA",
+      "SSO",
+      "access-control",
+      "RBAC",
+      "privileged-access-management"
+    ]
+  },
+  {
+    "name": "Microsoft Entra ID (Azure AD)",
+    "category": "IAM",
+    "capabilities": [
+      "identity-management",
+      "MFA",
+      "SSO",
+      "access-control",
+      "RBAC",
+      "privileged-access-management",
+      "log-management"
+    ]
+  },
+  {
+    "name": "JumpCloud",
+    "category": "IAM",
+    "capabilities": [
+      "identity-management",
+      "MFA",
+      "SSO",
+      "access-control",
+      "RBAC",
+      "asset-inventory",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "Duo Security",
+    "category": "IAM",
+    "capabilities": [
+      "MFA",
+      "access-control",
+      "identity-management"
+    ]
+  },
+  {
+    "name": "CyberArk",
+    "category": "PAM",
+    "capabilities": [
+      "privileged-access-management",
+      "access-control",
+      "identity-management",
+      "log-management"
+    ]
+  },
+  {
+    "name": "Splunk",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention",
+      "traffic-analysis",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Microsoft Sentinel",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention",
+      "traffic-analysis",
+      "incident-management",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Elastic Security (SIEM)",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "IBM QRadar",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention",
+      "traffic-analysis",
+      "ndr"
+    ]
+  },
+  {
+    "name": "Qualys",
+    "category": "Vulnerability Management",
+    "capabilities": [
+      "vulnerability-scanning",
+      "asset-inventory",
+      "patch-management",
+      "compliance-scanning",
+      "software-inventory"
+    ]
+  },
+  {
+    "name": "Tenable / Nessus",
+    "category": "Vulnerability Management",
+    "capabilities": [
+      "vulnerability-scanning",
+      "asset-inventory",
+      "compliance-scanning",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "Rapid7 InsightVM",
+    "category": "Vulnerability Management",
+    "capabilities": [
+      "vulnerability-scanning",
+      "asset-inventory",
+      "patch-management",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Microsoft 365 (Exchange Online)",
+    "category": "Email Security",
+    "capabilities": [
+      "email-filtering",
+      "anti-phishing",
+      "collaboration",
+      "log-management"
+    ]
+  },
+  {
+    "name": "Proofpoint",
+    "category": "Email Security",
+    "capabilities": [
+      "email-filtering",
+      "anti-phishing",
+      "url-filtering",
+      "data-encryption",
+      "dlp"
+    ]
+  },
+  {
+    "name": "Mimecast",
+    "category": "Email Security",
+    "capabilities": [
+      "email-filtering",
+      "anti-phishing",
+      "url-filtering",
+      "backup",
+      "data-recovery"
+    ]
+  },
+  {
+    "name": "KnowBe4",
+    "category": "Security Awareness",
+    "capabilities": [
+      "security-training",
+      "phishing-simulation",
+      "security-awareness-program"
+    ]
+  },
+  {
+    "name": "Proofpoint Security Awareness",
+    "category": "Security Awareness",
+    "capabilities": [
+      "security-training",
+      "phishing-simulation",
+      "security-awareness-program"
+    ]
+  },
+  {
+    "name": "Veeam",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing"
+    ]
+  },
+  {
+    "name": "Acronis",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing",
+      "malware-detection",
+      "endpoint-protection"
+    ]
+  },
+  {
+    "name": "AWS",
+    "category": "Cloud Platform",
+    "capabilities": [
+      "network-segmentation",
+      "access-control",
+      "log-management",
+      "asset-inventory",
+      "configuration-management",
+      "data-encryption",
+      "backup",
+      "vulnerability-scanning"
+    ]
+  },
+  {
+    "name": "Microsoft Azure",
+    "category": "Cloud Platform",
+    "capabilities": [
+      "network-segmentation",
+      "access-control",
+      "log-management",
+      "asset-inventory",
+      "configuration-management",
+      "data-encryption",
+      "backup",
+      "vulnerability-scanning"
+    ]
+  },
+  {
+    "name": "Google Cloud Platform (GCP)",
+    "category": "Cloud Platform",
+    "capabilities": [
+      "network-segmentation",
+      "access-control",
+      "log-management",
+      "asset-inventory",
+      "configuration-management",
+      "data-encryption",
+      "backup"
+    ]
+  },
+  {
+    "name": "Cisco Umbrella",
+    "category": "DNS Security",
+    "capabilities": [
+      "dns-filtering",
+      "web-filtering",
+      "url-filtering",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Zscaler",
+    "category": "Network Security",
+    "capabilities": [
+      "web-filtering",
+      "url-filtering",
+      "dns-filtering",
+      "network-monitoring",
+      "traffic-analysis",
+      "dlp",
+      "firewall",
+      "network-access-control"
+    ]
+  },
+  {
+    "name": "Darktrace",
+    "category": "NDR",
+    "capabilities": [
+      "ndr",
+      "network-monitoring",
+      "traffic-analysis",
+      "behavioral-analytics",
+      "alerting",
+      "IDS-IPS"
+    ]
+  },
+  {
+    "name": "Snyk",
+    "category": "Application Security",
+    "capabilities": [
+      "sast",
+      "dependency-scanning",
+      "application-security",
+      "secure-sdlc"
+    ]
+  },
+  {
+    "name": "Veracode",
+    "category": "Application Security",
+    "capabilities": [
+      "sast",
+      "dast",
+      "application-security",
+      "secure-sdlc",
+      "code-review"
+    ]
+  },
+  {
+    "name": "Cloudflare WAF",
+    "category": "WAF",
+    "capabilities": [
+      "waf",
+      "web-filtering",
+      "application-security",
+      "IDS-IPS",
+      "url-filtering",
+      "network-monitoring",
+      "ddos-protection"
+    ]
+  },
+  {
+    "name": "AWS WAF",
+    "category": "WAF",
+    "capabilities": [
+      "waf",
+      "web-filtering",
+      "application-security",
+      "traffic-filtering",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Imperva WAF",
+    "category": "WAF",
+    "capabilities": [
+      "waf",
+      "web-filtering",
+      "application-security",
+      "IDS-IPS",
+      "dlp",
+      "ddos-protection"
+    ]
+  },
+  {
+    "name": "F5 Advanced WAF",
+    "category": "WAF",
+    "capabilities": [
+      "waf",
+      "web-filtering",
+      "application-security",
+      "traffic-filtering",
+      "IDS-IPS"
+    ]
+  },
+  {
+    "name": "Barracuda WAF",
+    "category": "WAF",
+    "capabilities": [
+      "waf",
+      "web-filtering",
+      "application-security",
+      "IDS-IPS",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "ServiceNow CMDB",
+    "category": "CMDB",
+    "capabilities": [
+      "cmdb",
+      "asset-inventory",
+      "software-inventory",
+      "configuration-management",
+      "change-management"
+    ]
+  },
+  {
+    "name": "Device42",
+    "category": "CMDB",
+    "capabilities": [
+      "cmdb",
+      "asset-inventory",
+      "software-inventory",
+      "asset-discovery",
+      "network-monitoring",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "Lansweeper",
+    "category": "CMDB",
+    "capabilities": [
+      "cmdb",
+      "asset-inventory",
+      "software-inventory",
+      "asset-discovery",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Axonius",
+    "category": "CMDB",
+    "capabilities": [
+      "cmdb",
+      "asset-inventory",
+      "software-inventory",
+      "asset-discovery",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "ServiceNow ITSM",
+    "category": "ITSM",
+    "capabilities": [
+      "itsm",
+      "incident-management",
+      "change-management",
+      "vendor-management",
+      "third-party-risk"
+    ]
+  },
+  {
+    "name": "Jira Service Management",
+    "category": "ITSM",
+    "capabilities": [
+      "itsm",
+      "incident-management",
+      "change-management"
+    ]
+  },
+  {
+    "name": "Freshservice",
+    "category": "ITSM",
+    "capabilities": [
+      "itsm",
+      "incident-management",
+      "change-management",
+      "asset-inventory"
+    ]
+  },
+  {
+    "name": "PagerDuty",
+    "category": "ITSM",
+    "capabilities": [
+      "itsm",
+      "incident-management",
+      "alerting"
+    ]
+  },
+  {
+    "name": "Zendesk",
+    "category": "ITSM",
+    "capabilities": [
+      "itsm",
+      "incident-management"
+    ]
+  },
+  {
+    "name": "Microsoft Intune",
+    "category": "MDM",
+    "capabilities": [
+      "mdm",
+      "endpoint-protection",
+      "configuration-management",
+      "hardening",
+      "asset-inventory",
+      "patch-management",
+      "compliance-scanning",
+      "data-encryption"
+    ]
+  },
+  {
+    "name": "Jamf",
+    "category": "MDM",
+    "capabilities": [
+      "mdm",
+      "asset-inventory",
+      "configuration-management",
+      "hardening",
+      "patch-management",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "VMware Workspace ONE",
+    "category": "MDM",
+    "capabilities": [
+      "mdm",
+      "asset-inventory",
+      "configuration-management",
+      "hardening",
+      "access-control",
+      "data-encryption"
+    ]
+  },
+  {
+    "name": "Kandji",
+    "category": "MDM",
+    "capabilities": [
+      "mdm",
+      "asset-inventory",
+      "configuration-management",
+      "patch-management",
+      "compliance-scanning",
+      "hardening"
+    ]
+  },
+  {
+    "name": "Microsoft Purview DLP",
+    "category": "DLP",
+    "capabilities": [
+      "dlp",
+      "data-classification",
+      "data-encryption",
+      "log-management",
+      "data-retention"
+    ]
+  },
+  {
+    "name": "Symantec DLP",
+    "category": "DLP",
+    "capabilities": [
+      "dlp",
+      "data-classification",
+      "data-encryption",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Forcepoint DLP",
+    "category": "DLP",
+    "capabilities": [
+      "dlp",
+      "data-classification",
+      "web-filtering",
+      "email-filtering"
+    ]
+  },
+  {
+    "name": "Varonis",
+    "category": "DLP",
+    "capabilities": [
+      "dlp",
+      "data-classification",
+      "access-control",
+      "log-management",
+      "behavioral-analytics",
+      "data-retention"
+    ]
+  },
+  {
+    "name": "Ivanti Patch Management",
+    "category": "Patch Management",
+    "capabilities": [
+      "patch-management",
+      "vulnerability-scanning",
+      "asset-inventory",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "ManageEngine Patch Manager Plus",
+    "category": "Patch Management",
+    "capabilities": [
+      "patch-management",
+      "vulnerability-scanning",
+      "asset-inventory",
+      "software-inventory"
+    ]
+  },
+  {
+    "name": "NinjaRMM",
+    "category": "Patch Management",
+    "capabilities": [
+      "patch-management",
+      "asset-inventory",
+      "endpoint-monitoring",
+      "remote-monitoring",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "Wiz",
+    "category": "Cloud Security",
+    "capabilities": [
+      "cloud-security-posture",
+      "vulnerability-scanning",
+      "configuration-management",
+      "data-classification",
+      "compliance-scanning",
+      "container-security"
+    ]
+  },
+  {
+    "name": "Prisma Cloud (Palo Alto)",
+    "category": "Cloud Security",
+    "capabilities": [
+      "cloud-security-posture",
+      "vulnerability-scanning",
+      "configuration-management",
+      "compliance-scanning",
+      "container-security",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Microsoft Defender for Cloud",
+    "category": "Cloud Security",
+    "capabilities": [
+      "cloud-security-posture",
+      "vulnerability-scanning",
+      "configuration-management",
+      "compliance-scanning",
+      "security-monitoring",
+      "alerting"
+    ]
+  },
+  {
+    "name": "Orca Security",
+    "category": "Cloud Security",
+    "capabilities": [
+      "cloud-security-posture",
+      "vulnerability-scanning",
+      "data-classification",
+      "compliance-scanning",
+      "configuration-management"
+    ]
+  },
+  {
+    "name": "Lacework",
+    "category": "Cloud Security",
+    "capabilities": [
+      "cloud-security-posture",
+      "behavioral-analytics",
+      "security-monitoring",
+      "container-security",
+      "alerting"
+    ]
+  },
+  {
+    "name": "Palo Alto XSOAR",
+    "category": "SOAR",
+    "capabilities": [
+      "soar",
+      "incident-management",
+      "incident-response",
+      "alerting",
+      "forensics",
+      "playbooks"
+    ]
+  },
+  {
+    "name": "Splunk SOAR (Phantom)",
+    "category": "SOAR",
+    "capabilities": [
+      "soar",
+      "incident-management",
+      "incident-response",
+      "alerting",
+      "playbooks",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Microsoft Sentinel SOAR",
+    "category": "SOAR",
+    "capabilities": [
+      "soar",
+      "incident-management",
+      "incident-response",
+      "alerting",
+      "playbooks"
+    ]
+  },
+  {
+    "name": "Tines",
+    "category": "SOAR",
+    "capabilities": [
+      "soar",
+      "incident-management",
+      "alerting",
+      "playbooks"
+    ]
+  },
+  {
+    "name": "Rubrik",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing",
+      "ransomware-protection",
+      "data-classification"
+    ]
+  },
+  {
+    "name": "Cohesity",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing",
+      "data-classification"
+    ]
+  },
+  {
+    "name": "Druva",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing",
+      "data-encryption",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Commvault",
+    "category": "Backup & Recovery",
+    "capabilities": [
+      "backup",
+      "data-recovery",
+      "backup-testing",
+      "data-encryption",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Recorded Future",
+    "category": "Threat Intelligence",
+    "capabilities": [
+      "threat-intelligence",
+      "security-monitoring",
+      "vulnerability-scanning",
+      "alerting"
+    ]
+  },
+  {
+    "name": "ThreatConnect",
+    "category": "Threat Intelligence",
+    "capabilities": [
+      "threat-intelligence",
+      "incident-management",
+      "security-monitoring"
+    ]
+  },
+  {
+    "name": "Mandiant Threat Intelligence",
+    "category": "Threat Intelligence",
+    "capabilities": [
+      "threat-intelligence",
+      "security-monitoring",
+      "incident-response",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Checkmarx",
+    "category": "Application Security",
+    "capabilities": [
+      "sast",
+      "dast",
+      "application-security",
+      "secure-sdlc",
+      "dependency-scanning"
+    ]
+  },
+  {
+    "name": "SonarQube",
+    "category": "Application Security",
+    "capabilities": [
+      "sast",
+      "code-review",
+      "application-security",
+      "secure-sdlc",
+      "dependency-scanning"
+    ]
+  },
+  {
+    "name": "GitHub Advanced Security",
+    "category": "Application Security",
+    "capabilities": [
+      "sast",
+      "dependency-scanning",
+      "application-security",
+      "secure-sdlc",
+      "code-review"
+    ]
+  },
+  {
+    "name": "Burp Suite Enterprise",
+    "category": "Application Security",
+    "capabilities": [
+      "dast",
+      "application-security",
+      "penetration-testing",
+      "vulnerability-scanning"
+    ]
+  },
+  {
+    "name": "ServiceNow GRC",
+    "category": "GRC",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "change-management",
+      "itsm",
+      "incident-management"
+    ]
+  },
+  {
+    "name": "RSA Archer",
+    "category": "GRC",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "incident-management",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "OneTrust",
+    "category": "GRC",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "data-classification",
+      "compliance-scanning",
+      "data-retention"
+    ]
+  },
+  {
+    "name": "Drata",
+    "category": "GRC",
+    "capabilities": [
+      "compliance-scanning",
+      "vendor-management",
+      "security-monitoring",
+      "asset-inventory"
+    ]
+  },
+  {
+    "name": "HashiCorp Vault",
+    "category": "Secrets Management",
+    "capabilities": [
+      "secrets-management",
+      "data-encryption",
+      "access-control",
+      "log-management",
+      "privileged-access-management"
+    ]
+  },
+  {
+    "name": "CyberArk Conjur",
+    "category": "Secrets Management",
+    "capabilities": [
+      "secrets-management",
+      "privileged-access-management",
+      "access-control",
+      "log-management"
+    ]
+  },
+  {
+    "name": "Venafi",
+    "category": "Secrets Management",
+    "capabilities": [
+      "secrets-management",
+      "data-encryption",
+      "certificate-management",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Cisco ISE",
+    "category": "Network Access Control",
+    "capabilities": [
+      "network-access-control",
+      "access-control",
+      "identity-management",
+      "log-management",
+      "network-monitoring",
+      "network-segmentation"
+    ]
+  },
+  {
+    "name": "Aruba ClearPass",
+    "category": "Network Access Control",
+    "capabilities": [
+      "network-access-control",
+      "access-control",
+      "identity-management",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Forescout",
+    "category": "Network Access Control",
+    "capabilities": [
+      "network-access-control",
+      "asset-inventory",
+      "asset-discovery",
+      "network-monitoring",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Palo Alto GlobalProtect",
+    "category": "VPN",
+    "capabilities": [
+      "vpn",
+      "network-access-control",
+      "access-control",
+      "network-monitoring",
+      "MFA"
+    ]
+  },
+  {
+    "name": "Cisco AnyConnect / Secure Client",
+    "category": "VPN",
+    "capabilities": [
+      "vpn",
+      "network-access-control",
+      "access-control",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Cloudflare Access (ZTNA)",
+    "category": "VPN",
+    "capabilities": [
+      "vpn",
+      "network-access-control",
+      "access-control",
+      "MFA",
+      "identity-management",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Zscaler Private Access (ZPA)",
+    "category": "VPN",
+    "capabilities": [
+      "vpn",
+      "network-access-control",
+      "access-control",
+      "network-monitoring",
+      "identity-management"
+    ]
+  },
+  {
+    "name": "Cobalt (PTaaS)",
+    "category": "Penetration Testing",
+    "capabilities": [
+      "penetration-testing",
+      "vulnerability-scanning",
+      "application-security"
+    ]
+  },
+  {
+    "name": "HackerOne / Pentest",
+    "category": "Penetration Testing",
+    "capabilities": [
+      "penetration-testing",
+      "vulnerability-scanning",
+      "application-security"
+    ]
+  },
+  {
+    "name": "Rapid7 Metasploit Pro",
+    "category": "Penetration Testing",
+    "capabilities": [
+      "penetration-testing",
+      "vulnerability-scanning",
+      "red-team"
+    ]
+  },
+  {
+    "name": "BitSight",
+    "category": "Vendor Risk",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "security-monitoring",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "SecurityScorecard",
+    "category": "Vendor Risk",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "security-monitoring",
+      "vulnerability-scanning"
+    ]
+  },
+  {
+    "name": "ProcessUnity",
+    "category": "Vendor Risk",
+    "capabilities": [
+      "vendor-management",
+      "third-party-risk",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Trellix (McAfee/FireEye)",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "network-monitoring",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Cortex XDR (Palo Alto)",
+    "category": "EDR",
+    "capabilities": [
+      "EDR",
+      "malware-detection",
+      "endpoint-protection",
+      "behavioral-analytics",
+      "network-monitoring",
+      "forensics",
+      "incident-response"
+    ]
+  },
+  {
+    "name": "LogRhythm",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention",
+      "forensics"
+    ]
+  },
+  {
+    "name": "Sumo Logic",
+    "category": "SIEM",
+    "capabilities": [
+      "SIEM",
+      "log-management",
+      "security-monitoring",
+      "alerting",
+      "log-retention"
+    ]
+  },
+  {
+    "name": "Wiz (Vulnerability)",
+    "category": "Vulnerability Management",
+    "capabilities": [
+      "vulnerability-scanning",
+      "cloud-security-posture",
+      "compliance-scanning",
+      "asset-inventory",
+      "container-security"
+    ]
+  },
+  {
+    "name": "Orca Security (Vulnerability)",
+    "category": "Vulnerability Management",
+    "capabilities": [
+      "vulnerability-scanning",
+      "cloud-security-posture",
+      "compliance-scanning",
+      "data-classification"
+    ]
+  },
+  {
+    "name": "Microsoft Purview Information Protection",
+    "category": "Data Classification",
+    "capabilities": [
+      "data-classification",
+      "dlp",
+      "data-encryption",
+      "data-retention",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Titus (HelpSystems)",
+    "category": "Data Classification",
+    "capabilities": [
+      "data-classification",
+      "dlp",
+      "data-encryption"
+    ]
+  },
+  {
+    "name": "Aqua Security",
+    "category": "Container Security",
+    "capabilities": [
+      "container-security",
+      "vulnerability-scanning",
+      "configuration-management",
+      "compliance-scanning",
+      "application-security"
+    ]
+  },
+  {
+    "name": "Sysdig",
+    "category": "Container Security",
+    "capabilities": [
+      "container-security",
+      "vulnerability-scanning",
+      "security-monitoring",
+      "compliance-scanning",
+      "network-monitoring"
+    ]
+  },
+  {
+    "name": "Anchore",
+    "category": "Container Security",
+    "capabilities": [
+      "container-security",
+      "vulnerability-scanning",
+      "dependency-scanning",
+      "compliance-scanning"
+    ]
+  },
+  {
+    "name": "Infoblox",
+    "category": "DNS Security",
+    "capabilities": [
+      "dns-filtering",
+      "asset-discovery",
+      "network-monitoring",
+      "dhcp-logging",
+      "asset-inventory"
+    ]
+  },
+  {
+    "name": "Akamai EAA / SIA",
+    "category": "DNS Security",
+    "capabilities": [
+      "dns-filtering",
+      "web-filtering",
+      "network-access-control",
+      "url-filtering",
+      "network-monitoring"
+    ]
+  }
+]
