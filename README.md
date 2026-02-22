@@ -26,23 +26,7 @@ A self-hosted tool for mapping your security tool stack against compliance frame
 
 ## Production Install
 
-### 1. Get a TLS certificate
-
-If you don't have a CA-signed certificate, generate a self-signed one:
-
-```bash
-mkdir -p certs
-openssl req -x509 -newkey rsa:4096 \
-  -keyout certs/key.pem \
-  -out    certs/cert.pem \
-  -sha256 -days 3650 -nodes \
-  -subj   "/CN=$(hostname)" \
-  -addext "subjectAltName=DNS:$(hostname),IP:$(hostname -I | awk '{print $1}')"
-```
-
-If you have a CA-signed certificate, place your `cert.pem` and `key.pem` files in the `certs/` folder.
-
-### 2. Run the installer
+### 1. Run the installer
 
 From the root of the CAAMS folder:
 
@@ -54,10 +38,13 @@ The installer will:
 - Create a dedicated `caams` system account
 - Install all dependencies into an isolated Python virtualenv
 - Generate a secure secret key and store it in `/etc/caams.env`
+- Auto-generate a self-signed TLS certificate if none is present
 - Seed the database with framework and tool data
 - Register and start CAAMS as a systemd service (auto-starts on reboot)
 
-### 3. Verify it's running
+Using a CA-signed certificate? Place your cert.pem and key.pem in /opt/caams/certs/ before running the installer and it will use them as-is.
+
+### 2. Verify it's running
 
 ```bash
 sudo systemctl status caams
