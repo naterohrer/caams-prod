@@ -5,10 +5,10 @@
 # Must be run as root (or with sudo).
 #
 # What this script does:
-#   1. Validates prerequisites (systemctl, python3)
+#   1. Validates prerequisites (systemctl, python3, python3-venv, python3-pip)
 #   2. Copies the repo to /opt/caams (or uses it in-place if already there)
 #   3. Creates a virtualenv at /opt/caams/venv and installs dependencies
-#   4. Verifies TLS certificates (prints generation command and aborts if missing)
+#   4. Creates certs dir and auto-generates a self-signed TLS cert if none exists
 #   5. Creates the 'caams' system user/group if they don't exist
 #   6. Sets file ownership/permissions and creates the log directory
 #   7. Creates /etc/caams.env with CAAMS_SECRET_KEY
@@ -66,6 +66,58 @@ if [[ -z "$SYS_PYTHON3" ]]; then
 fi
 info "Found python3 at $SYS_PYTHON3"
 
+PY_VER="$("$SYS_PYTHON3" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+info "Python version: $PY_VER"
+
+# Test actual venv creation — catches missing ensurepip even when the venv
+# module itself imports fine (common on Debian/Ubuntu without python3.X-venv).
+_VENV_TEST="$(mktemp -d)"
+if ! "$SYS_PYTHON3" -m venv "$_VENV_TEST" &>/dev/null; then
+  rm -rf "$_VENV_TEST"
+  warn "Python venv not functional — attempting to install python${PY_VER}-venv…"
+  if command -v apt-get &>/dev/null; then
+    apt-get install -y "python${PY_VER}-venv"
+  elif command -v dnf &>/dev/null; then
+    dnf install -y python3-devel
+  elif command -v pacman &>/dev/null; then
+    pacman -S --noconfirm python
+  else
+    error "Could not install venv automatically. Install it manually and re-run:
+    Ubuntu/Debian:  sudo apt install python${PY_VER}-venv
+    RHEL/CentOS:    sudo dnf install python3-devel
+    Arch:           sudo pacman -S python"
+  fi
+  _VENV_TEST2="$(mktemp -d)"
+  if ! "$SYS_PYTHON3" -m venv "$_VENV_TEST2" &>/dev/null; then
+    rm -rf "$_VENV_TEST2"
+    error "venv still not working after install. Try manually: sudo apt install python${PY_VER}-venv"
+  fi
+  rm -rf "$_VENV_TEST2"
+else
+  rm -rf "$_VENV_TEST"
+fi
+info "Python venv: OK"
+
+if ! "$SYS_PYTHON3" -m pip --version &>/dev/null; then
+  warn "Python 'pip' module not found — attempting to install…"
+  if command -v apt-get &>/dev/null; then
+    apt-get install -y python3-pip
+  elif command -v dnf &>/dev/null; then
+    dnf install -y python3-pip
+  elif command -v pacman &>/dev/null; then
+    pacman -S --noconfirm python-pip
+  else
+    error "Could not install pip automatically. Install it manually and re-run:
+    Ubuntu/Debian:  sudo apt install python3-pip
+    RHEL/CentOS:    sudo dnf install python3-pip
+    Arch:           sudo pacman -S python-pip"
+  fi
+  if ! "$SYS_PYTHON3" -m pip --version &>/dev/null; then
+    error "pip installation failed. Install it manually and re-run."
+  fi
+fi
+info "Python pip module: OK"
+
 # ── 2. Copy / sync repo to install dir ───────────────────────────────────────
 if [[ "$REPO_DIR" != "$INSTALL_DIR" ]]; then
   info "Syncing repo → $INSTALL_DIR …"
@@ -98,28 +150,35 @@ else
 fi
 
 PYTHON3="$VENV_DIR/bin/python3"
+
+if ! "$PYTHON3" -m pip --version &>/dev/null; then
+  info "pip not found in venv — bootstrapping via ensurepip…"
+  "$PYTHON3" -m ensurepip --upgrade || error "Failed to bootstrap pip in venv. Delete $VENV_DIR and re-run."
+fi
+
 info "Installing Python dependencies into venv …"
 "$PYTHON3" -m pip install --quiet --upgrade pip
 "$PYTHON3" -m pip install --quiet --upgrade -r "$INSTALL_DIR/requirements.txt"
 info "Dependencies installed."
 
 # ── 4. TLS certificates ───────────────────────────────────────────────────────
+mkdir -p "$INSTALL_DIR/certs"
+
 if [[ ! -f "$CERT" || ! -f "$KEY" ]]; then
-  warn "TLS certificate not found at $INSTALL_DIR/certs/."
-  echo ""
-  echo "  Generate a self-signed cert with:"
-  echo ""
-  echo "    mkdir -p $INSTALL_DIR/certs"
-  echo "    openssl req -x509 -newkey rsa:4096 \\"
-  echo "      -keyout $INSTALL_DIR/certs/key.pem \\"
-  echo "      -out    $INSTALL_DIR/certs/cert.pem \\"
-  echo "      -sha256 -days 3650 -nodes \\"
-  echo "      -subj   \"/CN=\$(hostname)\" \\"
-  echo "      -addext \"subjectAltName=DNS:\$(hostname),IP:\$(hostname -I | awk '{print \$1}')\""
-  echo ""
-  echo "  Or copy your CA-signed cert.pem + key.pem into $INSTALL_DIR/certs/ ."
-  echo ""
-  error "Aborting — install the certificate and re-run this script."
+  if ! command -v openssl &>/dev/null; then
+    error "openssl not found — cannot auto-generate a certificate. Install openssl or place cert.pem + key.pem in $INSTALL_DIR/certs/ and re-run."
+  fi
+  warn "No TLS certificate found — generating a self-signed certificate…"
+  SERVER_IP="$(hostname -I | awk '{print $1}')"
+  openssl req -x509 -newkey rsa:4096 \
+    -keyout "$KEY" \
+    -out    "$CERT" \
+    -sha256 -days 3650 -nodes \
+    -subj   "/CN=$(hostname)" \
+    -addext "subjectAltName=DNS:$(hostname),IP:${SERVER_IP}" \
+    2>/dev/null
+  info "Self-signed certificate generated (valid 10 years)."
+  info "To use a CA-signed certificate, replace $INSTALL_DIR/certs/cert.pem and key.pem and restart the service."
 fi
 
 info "TLS certificate: OK"
