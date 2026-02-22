@@ -2,6 +2,8 @@
 
 A self-hosted tool for mapping your security tool stack against compliance frameworks (CIS Controls, NIST CSF, SOC 2, PCI DSS, HIPAA) and generating auditor-ready gap analysis reports.
 
+<img width="1294" height="819" alt="caams-prod-ss" src="https://github.com/user-attachments/assets/54bf001f-5191-42f4-947a-29cf68cc0866" />
+
 ---
 
 ## What it does
